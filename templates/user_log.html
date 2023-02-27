@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', path='/css/user_log.css') }}">
+</head>
+<body>
+	<div id="user-log">
+	    <h1>User Log</h1>
+	    <div>
+	      <label for="did-activity">Did Activity:</label>
+	      <select id="did-activity" name="did-activity">
+	        <option value="yes">Yes</option>
+	        <option value="no">No</option>
+	      </select>
+	    </div>
+        <div>
+            <label for="activity-end-time">Activity End Time:</label>
+            <input type="text" id="activity-end-time" name="activity-end-time" placeholder="HH:MM | e.g 07:30, 19:20">
+          </div>
+      
+          <div>
+            <label for="hunger-status">Hunger Status:</label>
+            <select id="hunger-status" name="hunger-status">
+              <option value="too-hungry">Too hungry</option>
+              <option value="hungry">Hungry</option>
+              <option value="normal">Normal</option>
+            </select>
+          </div>
+      
+          <div>
+            <label for="fasting-sugar">Fasting Sugar:</label>
+            <input type="text" id="fasting-sugar" name="fasting-sugar" placeholder="e.g 137, 200">
+          </div>
+          <form action="/control" method="get">
+            <button type="submit" id="submit-button">Submit</button>
+            </form>
+      </div>
+</body>
+</html>

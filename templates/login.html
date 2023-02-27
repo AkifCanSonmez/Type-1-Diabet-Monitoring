@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Login Page</title>
+  <link rel="stylesheet" type="text/css"
+    href = "{{url_for('static', path='/css/base.css') }}">  
+    <meta charset = "UTF-8"> <!--Türkçe karakter-->
+    <meta name="viewport" content="width=device-width", initial-scale="1.0"> <!--Telefon ve bilgisayar width oto ayar-->
+</head>
+<body class="login-page">
+  <form class="login-form" action="/home" method="post">
+    <label for="username">Username:</label>
+    <input class="login-bar" type="text" id="username" name="username">
+    <br>
+    <label for="password">Password:</label>
+    <input class="login-bar" type="password" id="password" name="password">
+    <br><br>
+    <script>
+      var message = "{{ message }}";
+      if (message) {
+          alert(message);
+      }
+    </script>
+    <input class="login-button" type="submit" value="Login">
+  </form> 
+  <p></p>
+  <p>username: admin</p>
+  <p>password: admin</p>
+</body>
+</html>
