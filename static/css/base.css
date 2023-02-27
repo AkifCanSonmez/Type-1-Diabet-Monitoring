@@ -1,0 +1,89 @@
+h1 {
+    color: red;
+    text-align: center;
+}
+
+  .login-page {
+    background-color: white;
+    font-family: Arial, sans-serif;
+  }
+  
+  .login-form {
+    width: 300px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: skyblue;
+    border: 1px solid #ccc;
+    box-shadow: 2px 2px 5px #ccc;
+    display: grid;
+  }
+  
+  label {
+    font-weight: bold;
+    display: block;
+    margin-bottom: 3px;
+  }
+
+  .login-bar {
+    background-color: white
+  }
+
+  .login-button {
+    font-weight: bold;
+    margin-bottom: 2px;
+    background-color: white;
+    padding: 14px 20px;
+    margin: 8px 0;
+    border: 2px solid #333; /* adds a 2px solid border */
+    cursor: pointer;
+    width: 100%;
+    font-size:1.2rem;
+}
+
+  
+  p {
+    font-family: Georgia, serif; /* sets the font family */
+    font-size: 18px; /* sets the font size */
+    line-height: 0.9; /* sets the line height */
+    color: black; /* sets the text color */
+    text-align: center; /* sets the text alignment */
+    margin: 0 0 1em 0; /* sets the margins */
+  }
+
+  .camera-control {
+    display: block;
+  }
+  
+  .camera-stream {
+    display: none;
+  }
+  
+  .capture-control {
+    display: none;
+  }
+  
+  #openCameraBtn:active ~ .camera-stream,
+  #openCameraBtn:active ~ .capture-control {
+    display: block;
+  }
+.homebody{
+  background-color: lightblue;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 70%;
+}
+
+.btnhome {
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  margin-top: 20px;
+  background-color: greenyellow;
+  padding: 20px;
+  border-radius: 10px;
+  flex-direction: column;
+  font-size: 17px;
+}
