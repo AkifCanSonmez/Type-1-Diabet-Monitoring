@@ -8,7 +8,7 @@ from sqlalchemy.orm import Session
 from jose import jwt, JWTError
 from database import SessionLocal, engine
 from datetime import datetime, timedelta
-import models
+from models import Account
 
 templates = Jinja2Templates(directory="templates")
 
@@ -32,11 +32,11 @@ def get_db():
 
 
 async def authenticate_user(username, password, db):
-    user = db.query(models.Users).filter(models.Users.username == username).first()
+    user = db.query(Account).filter(Account.username == username).first()
     if user:
-        if password != user.password:
+        if password != user.user_password:
             return None
-        user_id = user.user_id
+        user_id = user.pk_user
         return user_id
     else:
         return None
