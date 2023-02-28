@@ -11,17 +11,17 @@ class Account(Base):
     username = Column(String(30), unique=True)
     user_password = Column(String(30))
     email = Column(String(70), unique=True)
-    created_on = Column(TIMESTAMP)
-    last_login = Column(TIMESTAMP)
-    body_fat = Column(Numeric(3, 1))
     age = Column(Integer)
     weight = Column(Numeric(4, 1))
     height = Column(Numeric(4, 1))
+    body_fat = Column(Numeric(3, 1))
     activity = Column(String(20))
+    created_on = Column(TIMESTAMP)
+    last_login = Column(TIMESTAMP)
 
-class FoodNutrition(Base):
-    __tablename__ = 'food_nutritions'
-    food_id = Column(Integer, primary_key=True)
+class NutritionDB(Base):
+    __tablename__ = 'nutritions_db'
+    pk_food = Column(Integer, primary_key=True)
     food_name = Column(String)
     carbohydrate_100g = Column(String)
     protein_100g = Column(String)
@@ -35,38 +35,39 @@ class FoodNutrition(Base):
     vitamin_c_100g = Column(String)
     iron_100g = Column(String)
     glycemic_index = Column(Integer)
+    calories = Column(String)
 
 class MealNutrition(Base):
-    __tablename__ = 'meal_info_nutritions'
-    pk_nutritions = Column(Integer, primary_key=True)
+    __tablename__ = 'meal_nutrition'
+    pk_meal_nutrition = Column(Integer, primary_key=True)
     carbohydrate_sources = Column(String)
-    main_carbohydrate_source = Column(String)
-    total_carbohydrate_amount = Column(Numeric(5, 2))
-    main_carbohydrate_amount = Column(Numeric(5, 2))
-    protein_amount = Column(Numeric(5, 2))
-    fat_amount = Column(Numeric(5, 2))
-    calories_amount = Column(Numeric(5, 2))
+    carbohydrate_amount_total = Column(Numeric(5, 2))
+    protein_amount_total = Column(Numeric(5, 2))
+    fat_amount_total = Column(Numeric(5, 2))
+    calories_amount_total = Column(Numeric(5, 2))
+    carbohydrate_source_main = Column(String)
+    carbohydrate_amount_main = Column(Numeric(5, 2))
+    gi_score_of_main_carb = Column(Integer)
 
 class UserLog(Base):
     __tablename__ = 'user_log'
-    pk_userlog = Column(Integer, primary_key=True)
-    lantus_dose = Column(Integer)
-    bed_time = Column(TIMESTAMP)
-    wake_up_time = Column(TIMESTAMP)
-    meal_time = Column(TIMESTAMP)
+    pk_user_log = Column(Integer, primary_key=True)
+    fasting_sugar = Column(Integer)
+    fullness_sugar = Column(Integer)
+    novorapid_dose = Column(Integer)
+    hunger_status = Column(String)
     did_activity = Column(Boolean)
     minutes_after_activity = Column(Integer)
-    hunger_status = Column(String)
-    fasting_sugar_before_meal = Column(Integer)
-    novorapid_dose_for_meal = Column(Integer)
-    fullness_sugar_after_meal = Column(Integer)
+    meal_time = Column(TIMESTAMP)
+    bed_time = Column(TIMESTAMP)
+    wake_up_time = Column(TIMESTAMP)
 
-class Meal(Base):
-    __tablename__ = 'meal_info'
-    pk_meal_id = Column(Integer, primary_key=True)
+class MealRecord(Base):
+    __tablename__ = 'meal_record'
+    record_id = Column(Integer, primary_key=True)
     fk_user = Column(Integer, ForeignKey('account.pk_user'))
-    fk_nutritions = Column(Integer, ForeignKey('meal_info_nutritions.pk_nutritions'))
-    fk_userlog = Column(Integer, ForeignKey('user_log.pk_userlog'))
+    fk_nutritions = Column(Integer, ForeignKey('meal_nutrition.pk_meal_nutrition'))
+    fk_userlog = Column(Integer, ForeignKey('user_log.pk_user_log'))
     user = relationship('Account')
     nutritions = relationship('MealNutrition')
     user_log = relationship('UserLog')

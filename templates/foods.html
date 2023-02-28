@@ -13,7 +13,7 @@
         <label for="food">Food:</label>
         <input type="text" id="food" name="foods" value="{{ obj }}">
         <label for="quantity">Quantity:</label>
-        <input type="number" id="quantity" name="quantities" value="">
+        <input type="number" id="quantity" name="amounts" value="">
         <button class="remove-food-btn" onclick="removeFoodInfo(this)">x</button>
       </div>
       {% endfor %}
@@ -31,7 +31,7 @@
         <label for="food">Food:</label>
         <input type="text" id="food" name="foods" value="">
         <label for="quantity">Quantity:</label>
-        <input type="number" id="quantity" name="quantities" value="">
+        <input type="number" id="quantity" name="amounts" value="">
         <button class="remove-food-btn" onclick="removeFoodInfo(this)">x</button>
       `;
       foodInfoDiv.insertBefore(newFoodDiv, document.querySelector('#add-food-btn'));
@@ -44,17 +44,17 @@
     function sendFormData() {
     const containerDiv = document.querySelector('#container');
     const foodInputs = containerDiv.querySelectorAll('input[name="foods"]');
-    const quantityInputs = containerDiv.querySelectorAll('input[name="quantities"]');
+    const quantityInputs = containerDiv.querySelectorAll('input[name="amounts"]');
     const foods = [];
-    const quantities = [];
+    const amounts = [];
     for (let i = 0; i < foodInputs.length; i++) {
       foods.push(foodInputs[i].value);
-      quantities.push(quantityInputs[i].value);
+      amounts.push(quantityInputs[i].value);
     }
 
     fetch('/temporary-storage-for-inputs', {
       method: 'POST',
-      body: JSON.stringify({ foods, quantities }),
+      body: JSON.stringify({ foods, amounts }),
       headers: {
         'Content-Type': 'application/json'
       }
