@@ -6,6 +6,7 @@
 <body>
 	<div id="user-log">
 	    <h1>User Log</h1>
+      <form action="/control" method="post">
 	    <div>
 	      <label for="did-activity">Did Activity:</label>
 	      <select id="did-activity" name="did-activity">
@@ -31,7 +32,6 @@
             <label for="fasting-sugar">Fasting Sugar:</label>
             <input type="text" id="fasting-sugar" name="fasting-sugar" placeholder="e.g 137, 200">
           </div>
-          <form action="/control" method="get">
             <button type="submit" id="submit-button">Submit</button>
             </form>
       </div>

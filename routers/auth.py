@@ -6,7 +6,7 @@ from fastapi.templating import Jinja2Templates
 from fastapi.responses import RedirectResponse
 from sqlalchemy.orm import Session
 from jose import jwt, JWTError
-from database import SessionLocal, engine
+from database import SessionLocal
 from datetime import datetime, timedelta
 from models import Account
 
