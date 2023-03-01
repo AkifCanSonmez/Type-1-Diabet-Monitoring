@@ -5,25 +5,15 @@ from fastapi import APIRouter, Request, Body, Form, UploadFile, status, Depends
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import RedirectResponse
 from typing import List, Dict, Union
-from sqlalchemy.orm import Session
-from database import SessionLocal
 import cv2
 import numpy as np
-import crud
 
 router = APIRouter(
     prefix="",
-    tags=["todos"],
+    tags=["newmeal"],
     responses={404: {"description": "Todo not found"}}
 )
 templates = Jinja2Templates(directory="templates")
-
-def get_db():
-    try:
-        db = SessionLocal()
-        yield db
-    finally:
-        db.close()
 
 
 @router.get("/home/newmeal")
@@ -57,12 +47,4 @@ async def temporary_storage(request: Request):
 async def user_log(request: Request):
     return templates.TemplateResponse("user_log.html", {"request": request})
 
-@router.post("/control")
-async def control(request: Request, db:Session=Depends(get_db)):
-    meal_foods = request.session.get("foods")
-    form_data = await request.form()
-    user_log = dict(form_data)
-    crud.add_meal(db, meal_foods, user_log)
-    return "Tamamlandı"
-    #artık db işlemleri başlayacak
 
