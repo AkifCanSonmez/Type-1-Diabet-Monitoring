@@ -35,7 +35,7 @@ class NutritionDB(Base):
     vitamin_c_100g = Column(String)
     iron_100g = Column(String)
     glycemic_index = Column(Integer)
-    calories = Column(String)
+    calories_100g = Column(Numeric(6,1))
 
 class MealNutrition(Base):
     __tablename__ = 'meal_nutrition'
