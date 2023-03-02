@@ -41,12 +41,12 @@ class MealNutrition(Base):
     __tablename__ = 'meal_nutrition'
     pk_meal_nutrition = Column(Integer, primary_key=True)
     carbohydrate_sources = Column(String)
-    carbohydrate_amount_total = Column(Numeric(5, 2))
-    protein_amount_total = Column(Numeric(5, 2))
-    fat_amount_total = Column(Numeric(5, 2))
-    calories_amount_total = Column(Numeric(5, 2))
+    carbohydrate_amount_total = Column(Numeric(5, 1))
+    protein_amount_total = Column(Numeric(5, 1))
+    fat_amount_total = Column(Numeric(5, 1))
+    calories_amount_total = Column(Numeric(6, 1))
     carbohydrate_source_main = Column(String)
-    carbohydrate_amount_main = Column(Numeric(5, 2))
+    carbohydrate_amount_main = Column(Numeric(5, 1))
     gi_score_of_main_carb = Column(Integer)
 
 class UserLog(Base):
@@ -66,8 +66,8 @@ class MealRecord(Base):
     __tablename__ = 'meal_record'
     record_id = Column(Integer, primary_key=True)
     fk_user = Column(Integer, ForeignKey('account.pk_user'))
-    fk_nutritions = Column(Integer, ForeignKey('meal_nutrition.pk_meal_nutrition'))
-    fk_userlog = Column(Integer, ForeignKey('user_log.pk_user_log'))
+    fk_meal_nutritions = Column(Integer, ForeignKey('meal_nutrition.pk_meal_nutrition'))
+    fk_user_log = Column(Integer, ForeignKey('user_log.pk_user_log'))
     user = relationship('Account')
     nutritions = relationship('MealNutrition')
     user_log = relationship('UserLog')
