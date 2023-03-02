@@ -4,7 +4,7 @@ import uvicorn
 from fastapi.templating import Jinja2Templates
 from starlette.staticfiles import StaticFiles
 from starlette.middleware.sessions import SessionMiddleware
-from routers import auth, newmeal, crud
+from routers import auth, newmeal
 
 app = FastAPI()
 
@@ -16,7 +16,6 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 
 app.include_router(auth.router)
 app.include_router(newmeal.router)
-app.include_router(crud.router)
 
 
 

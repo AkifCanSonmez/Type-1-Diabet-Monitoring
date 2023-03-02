@@ -36,8 +36,7 @@ async def authenticate_user(username, password, db):
     if user:
         if password != user.user_password:
             return None
-        user_id = user.pk_user
-        return user_id
+        return user
     else:
         return None
     
@@ -48,12 +47,14 @@ async def get_current_user(request: Request):
         if token is None:
             return None
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        username: str = payload.get("sub")
         user_id: int = payload.get("id")
-        if user_id is None:
+        if username is None or user_id is None:
+            #!!!!!logout(request)!!!!!
             raise JWTError
+        return {"username": username, "id": user_id}
     except JWTError:
         raise HTTPException(status_code=401, detail="Invalid or expired token")
-    return user_id
 
 
 def create_access_token(username: str, user_id: int):
@@ -61,7 +62,7 @@ def create_access_token(username: str, user_id: int):
     # Authentication successful, generate JWT token
     access_token_expires_in_minutes = 30
     expires_at = datetime.utcnow() + timedelta(minutes=access_token_expires_in_minutes)
-    access_token = jwt.encode({"id": user_id, "exp": expires_at}, SECRET_KEY, algorithm=ALGORITHM)
+    access_token = jwt.encode({"sub": username,"id": user_id, "exp": expires_at}, SECRET_KEY, algorithm=ALGORITHM)
     return access_token
 
 
@@ -78,7 +79,7 @@ async def home(request:Request, username: str = Form(...), password: str = Form(
     if user is None:
         raise HTTPException(status_code=401, detail="Invalid username or password")
 
-    access_token = create_access_token(username, password)
+    access_token = create_access_token(username, user.pk_user)
     response = templates.TemplateResponse("home.html", {"request": request})
     response.set_cookie(key="access_token", value=access_token, httponly=True)
     
