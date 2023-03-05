@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Postprandial Glucose Input</title>
+    <link rel="stylesheet" href="{{ url_for('static', path='css/postprandial_enter.css') }}">
+  </head>
+  <body>
+    <div class="container">
+      <h1>Enter Postprandial Glucose</h1>
+        <div class="meal-row">
+          <p>Last Meal Information</p>
+          <ul>
+            <li>
+                <label>Meal Time:</label> <span>{{ query.user_log.meal_time.strftime('%H:%M %d.%m.%Y') }}</span><br>
+                <label>Fasting Glucose:</label> <span>{{ query.user_log.fasting_glucose }} mg/dL</span><br>
+                <label>Main Carbohydrate Source:</label> <span>{{ query.nutritions.carbohydrate_source_main }}</span><br>
+                <label>Carbohydrate Amount Total:</label> <span>{{ query.nutritions.carbohydrate_amount_total }}gr</span><br>
+                <label>Novorapid Dose:</label> <span>{{ query.user_log.novorapid_dose }}gr</span>
+              </li>
+          </ul>
+          <form method="post" action="/add-postprandial-glucose-last-meal">
+          <label>Enter Postprandial Glucose (mg/dL):</label>
+          <input type="number" name="postprandial_glucose" value="{{ query.user_log.postprandial_glucose }}" required>
+        </div>
+        <button type="submit">Submit</button>
+      </form>
+    </div>
+  </body>
+</html>
