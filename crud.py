@@ -2,32 +2,73 @@ import sys
 sys.path.append("..")
 
 from sqlalchemy.orm import Session, joinedload
-from sqlalchemy import or_
-import models
+from sqlalchemy import or_, and_, func
+import tables
 import decimal
 import datetime
 from algorithms_ import convert_str_to_float
 from database import SessionLocal
+from datetime import timedelta
 #from algorithms_ import similar_meal_algorithm
 
 
 # CRUD Operations for NewMeal Page
 #-----------------------------------------------------------------------------------
-# Query if last meal's fasting sugar and insulin dose added
+# Query if last meal's fasting glucose and insulin dose added
 #From NutritionDB getting inputs foods nutritional information
+def get_mealRecord_for_glucoseAnalysis(db:Session, user_id:int, day: int):
+
+    query = db.query(tables.UserLog.fasting_glucose,
+                    tables.MealNutrition.carbohydrate_amount_total,
+                    tables.UserLog.novorapid_dose,
+                    tables.MealNutrition.carbohydrate_sources,
+                    tables.UserLog.did_activity,
+                    tables.UserLog.minutes_after_activity,
+                    tables.MealRecord.fk_user,
+                    tables.UserLog.meal_time,
+                    tables.MealRecord.record_id)\
+            .filter(tables.MealRecord.fk_user == user_id, tables.UserLog.meal_time >= datetime.datetime.now() - timedelta(days=day))\
+            .join(tables.MealRecord, tables.MealRecord.fk_user_log == tables.UserLog.pk_user_log)\
+            .join(tables.MealNutrition, tables.MealRecord.fk_meal_nutritions == tables.MealNutrition.pk_meal_nutrition)\
+            .order_by(tables.UserLog.meal_time.desc())\
+            .limit(10)\
+            .all()
+    return query
+
+#def get_mealRecord_for_nutritionAnalysis(db:Session, user_id:int, day:int):
+
+def get_avg_nutritions(db:Session, user_id:int):
+    two_months_ago = datetime.datetime.now() - datetime.timedelta(days=60)
+    query = db.query(
+            func.date_trunc('month', tables.UserLog.meal_time).label("month"),
+            func.avg(tables.MealNutrition.calories_amount_total).label("avg_calories"),
+            func.avg(tables.MealNutrition.carbohydrate_amount_main).label("avg_carbs"),
+            func.avg(tables.MealNutrition.protein_amount_total).label("avg_protein"),
+            func.avg(tables.MealNutrition.fat_amount_total).label("avg_fat")
+        ) \
+        .join(tables.MealRecord, tables.MealRecord.fk_user_log == tables.UserLog.pk_user_log) \
+        .filter(tables.MealNutrition.pk_meal_nutrition == tables.MealRecord.fk_meal_nutritions,
+                tables.MealRecord.fk_user == user_id,
+                tables.UserLog.meal_time >= two_months_ago) \
+        .group_by("month") \
+        .all()
+
+    return query
+    
+
 
 def get_nutritional_informations(db:Session, foods:list):
     #Getting food nutrition values from DB
-    query_nutrition_values = db.query(models.NutritionDB).filter(or_(*[models.NutritionDB.food_name == food for food in foods])).all()
+    query_nutrition_values = db.query(tables.NutritionDB).filter(or_(*[tables.NutritionDB.food_name == food for food in foods])).all()
     return query_nutrition_values
 
 #Send to temporary storage
 def get_bed_time_today(db:Session, current_user_id: int):
     
     #innerjoin- lefjoin vs.bunları araştır ona göre yap
-    last_row = db.query(models.UserLog).join(models.MealRecord).\
-                filter(models.MealRecord.fk_user == current_user_id).\
-                order_by(models.UserLog.pk_user_log.desc()).first()
+    last_row = db.query(tables.UserLog).join(tables.MealRecord).\
+                filter(tables.MealRecord.fk_user == current_user_id).\
+                order_by(tables.UserLog.pk_user_log.desc()).first()
     
     return last_row.bed_time
     
@@ -39,18 +80,26 @@ def get_bed_time_today(db:Session, current_user_id: int):
     except:
         print("ERROR")
 
-def check_fullness_last_3_meals(db:Session, user_id:int):
-    query = db.query(models.UserLog).join(models.MealRecord)\
-                  .filter(models.MealRecord.fk_user == user_id)\
-                  .filter(models.UserLog.fullness_sugar == None)\
-                  .order_by(models.UserLog.pk_user_log.desc())\
-                  .limit(3).all()
-    return query
+def check_postprandial_glucose_last_meal(db:Session, user_id:int):
+    #try ekle eğer tabloda bir şey yokken hata verirse
+    latest_meal_record = db.query(tables.MealRecord)\
+                            .filter(tables.MealRecord.fk_user == user_id)\
+                            .order_by(tables.MealRecord.record_id.desc())\
+                            .first()
+    if latest_meal_record.user_log.postprandial_glucose == None:
+        return latest_meal_record
+    else:
+        return None
 
-def add_fullness_sugar(db:Session, value:list):
-    pass
-    
+def update_postprandial_glucose_row(db:Session, user_id, postprandial_glucose):
+    latest_meal_record = db.query(tables.MealRecord)\
+                            .filter(tables.MealRecord.fk_user == user_id)\
+                            .order_by(tables.MealRecord.record_id.desc())\
+                            .first()
+    latest_meal_record.user_log.postprandial_glucose = postprandial_glucose
+    db.commit()
 
+    return "Completed"
 
 # Get Similar Meals
 def get_similar_meals(db:Session):
@@ -113,7 +162,7 @@ def process_nutrition_inputs(db: Session, foods_amounts: dict):
 
 
     #gi_score will be main carb's gi score
-    cols.gi_score_of_main_carb = db.query(models.NutritionDB.glycemic_index).filter(models.NutritionDB.food_name==cols.carbohydrate_source_main).first()[0]
+    cols.gi_score_of_main_carb = db.query(tables.NutritionDB.glycemic_index).filter(tables.NutritionDB.food_name==cols.carbohydrate_source_main).first()[0]
     
     return cols
 
@@ -122,8 +171,8 @@ def process_user_log_inputs(db:Session, user_log):
     #Will be Returned
     class user_log_columns:
         def __init__(self):
-            self.fasting_sugar: int
-            self.fullness_sugar: int
+            self.fasting_glucose: int
+            self.postprandial_glucose: int
             self.novorapid_dose: int
             self.hunger_status: str
             self.did_activity: bool
@@ -135,7 +184,7 @@ def process_user_log_inputs(db:Session, user_log):
 
     col.did_activity = True if user_log['did-activity'] else False
     col.hunger_status = user_log['hunger-status']
-    col.fasting_sugar = user_log['fasting-sugar']
+    col.fasting_glucose = user_log['fasting-glucose']
 
     act_end = datetime.datetime.strptime(user_log["activity-end-time"], "%H:%M").time() # convert to datetime object
     now = datetime.datetime.now().replace(second=0, microsecond=0).time() # get current time and remove seconds/microseconds  
@@ -152,7 +201,7 @@ def process_user_log_inputs(db:Session, user_log):
             col.wake_up_time = datetime.datetime.combine(now.date(), wake_up_time)
     except:
         #If there is bed&wake up time for same day in db, use this for new row
-        last_row = db.query(models.UserLog).order_by(models.UserLog.pk_user_log.desc()).first()
+        last_row = db.query(tables.UserLog).order_by(tables.UserLog.pk_user_log.desc()).first()
         col.bed_time = last_row.bed_time
         col.wake_up_time = last_row.wake_up_time
     
@@ -162,7 +211,7 @@ def process_user_log_inputs(db:Session, user_log):
         #todo_model.novorapid_dose = None
 
         #son girişte sorup update edersin update altında
-        #todo_model.fullness_sugar
+        #todo_model.postprandial_glucose
     
 
 def add_todo_meal_nutrition(db:Session, meal_foods_amounts):
@@ -172,7 +221,7 @@ def add_todo_meal_nutrition(db:Session, meal_foods_amounts):
     foods_amounts = dict(zip(meal_foods_amounts["foods"], meal_foods_amounts['amounts']))
 
     # Create a new MealNutrition object and populate it with the nutrition values calculated from the inputs
-    todo_model = models.MealNutrition()
+    todo_model = tables.MealNutrition()
 
     # Calculate the nutrition values for the meal and populate the todo_model object
     cols = process_nutrition_inputs(db, foods_amounts)
@@ -193,12 +242,12 @@ def add_todo_meal_nutrition(db:Session, meal_foods_amounts):
     return todo_model.pk_meal_nutrition
 
 def add_todo_user_log(db:Session, user_log):
-    todo_model = models.UserLog()
+    todo_model = tables.UserLog()
     cols = process_user_log_inputs(db,user_log)
 
     todo_model.bed_time = cols.bed_time
     todo_model.did_activity = cols.did_activity
-    todo_model.fasting_sugar = cols.fasting_sugar
+    todo_model.fasting_glucose = cols.fasting_glucose
     todo_model.hunger_status = cols.hunger_status
     todo_model.meal_time = cols.meal_time
     todo_model.minutes_after_activity = cols.minutes_after_activity
@@ -215,7 +264,7 @@ def add_new_meal(db:Session, user, meal_foods_amounts, user_log):
     pk_meal_nutrition = add_todo_meal_nutrition(db, meal_foods_amounts)
     pk_user_log = add_todo_user_log(db, user_log)
     
-    todo_model = models.MealRecord()
+    todo_model = tables.MealRecord()
     todo_model.fk_meal_nutritions = pk_meal_nutrition
     todo_model.fk_user = pk_user
     todo_model.fk_user_log = pk_user_log
@@ -242,7 +291,7 @@ def add_new_meal(db:Session, user, meal_foods_amounts, user_log):
 # CRUD Operations for Analysis Page
 #--------------------------------------------------------------------------------
 #lantus için gerekebilir
-def get_fasting_blood_sugars(db:Session, number: int = 10):
+def get_fasting_glucose(db:Session, number: int = 10):
     pass
 
 def get_average_information(db:Session):
@@ -250,12 +299,20 @@ def get_average_information(db:Session):
     #algorithm.py'den hba1c, günlük ort carb,yağ,protein algoritmasını yaparsın 
     pass
 
-def get_fullness_blood_sugars(db:Session, number: int = 10):
+def get_postprandial_glucose(db:Session, number: int = 10):
     pass
 
-def get_critic_fulness_sugar_meal(db:Session, number: int = 10):
+def get_critic_postprandial_glucose_meal(db:Session, number: int = 10):
     pass
 
 def get_daily_calories(db:Session, number: int = 10):
     pass
+
+
+
+
+
+
+
+
 

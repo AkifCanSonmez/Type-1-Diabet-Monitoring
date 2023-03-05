@@ -1,15 +1,15 @@
 import sys
 sys.path.append("..")
 
-from fastapi import APIRouter, Request, Form, HTTPException, Depends
+from fastapi import APIRouter, Request, Form, HTTPException, Depends, status
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import RedirectResponse
 from sqlalchemy.orm import Session
 from jose import jwt, JWTError
 from database import SessionLocal
 from datetime import datetime, timedelta
-from models import Account
-
+from tables import Account
+import crud 
 templates = Jinja2Templates(directory="templates")
 
 router = APIRouter(
@@ -71,7 +71,7 @@ async def login(request: Request):
     return templates.TemplateResponse("login.html", {"request": request})
 
 
-@router.post("/home/")
+@router.post("/redirect/")
 async def home(request:Request, username: str = Form(...), password: str = Form(...),
                db: Session = Depends(get_db)):
 
@@ -80,7 +80,17 @@ async def home(request:Request, username: str = Form(...), password: str = Form(
         raise HTTPException(status_code=401, detail="Invalid username or password")
 
     access_token = create_access_token(username, user.pk_user)
-    response = templates.TemplateResponse("home.html", {"request": request})
+
+    query = crud.check_postprandial_glucose_last_meal(db, user.pk_user)
+    if query is None:
+        response = RedirectResponse("/home/", status_code=status.HTTP_302_FOUND)
+    else:
+        response = templates.TemplateResponse("postprandial_enter.html", {"request": request, "query": query})
+
     response.set_cookie(key="access_token", value=access_token, httponly=True)
-    
     return response
+
+
+@router.get("/home/")
+async def home(request: Request):
+    return templates.TemplateResponse("home.html", {"request": request})
