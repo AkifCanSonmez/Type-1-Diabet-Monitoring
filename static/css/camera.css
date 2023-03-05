@@ -1,0 +1,35 @@
+body {
+    background-color: lightblue;
+  }
+  
+div {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+  }
+  
+  video, img {
+    margin-top: 10px;
+    border: 2px solid black;
+    max-width: 100%;
+    height: auto;
+  }
+  
+  #take_photo, #send_image, #take_photo_again {
+    padding: 10px;
+    margin-top: 10px;
+    font-size: 16px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    width: 100%;
+    max-width: 300px;
+  }
+  
+  #take_photo:hover, #send_image:hover, #take_photo_again:hover {
+    background-color: #3e8e41;
+  }
