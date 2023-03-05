@@ -7,15 +7,12 @@
   </head>
   <body class="homebody">
     <div>
-      <form action="{{ url_for('newmeal_page') }}" method="get">
+      <form action="/home/newmeal" method="get">
         <button class="btnhome" id="newMealBtn" type="submit">New Meal</button>
       </form>
-      <form action="{{ url_for('newmeal_page') }}" method="get">
-        <button class="btnhome" id="bloodSugarBtn" type="submit">Blood Sugar</button>
-      </form>
-      <form action="{{ url_for('newmeal_page') }}" method="get">
-        <button class="btnhome" id="dailyCaloriesBtn" type="submit">Daily Calories</button>
-      </form>
+      <form action="/home/analytics/glucose-analysis/" method="get">
+        <button class="btnhome" id="analyticsBtn" type="submit">View Analytics</button>
+    </form>
     </div>
   </body>
 </html>

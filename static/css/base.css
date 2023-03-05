@@ -50,22 +50,7 @@ h1 {
     margin: 0 0 1em 0; /* sets the margins */
   }
 
-  .camera-control {
-    display: block;
-  }
   
-  .camera-stream {
-    display: none;
-  }
-  
-  .capture-control {
-    display: none;
-  }
-  
-  #openCameraBtn:active ~ .camera-stream,
-  #openCameraBtn:active ~ .capture-control {
-    display: block;
-  }
 .homebody{
   background-color: lightblue;
   display: flex;
@@ -87,3 +72,4 @@ h1 {
   flex-direction: column;
   font-size: 17px;
 }
+

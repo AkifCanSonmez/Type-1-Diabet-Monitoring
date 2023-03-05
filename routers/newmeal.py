@@ -3,11 +3,15 @@ sys.path.append("..")
 
 from database import SessionLocal
 from sqlalchemy.orm import Session
-from fastapi import APIRouter, Request, Body, Form, UploadFile, status, Depends
+from fastapi import APIRouter, Request, Body, Form, UploadFile, status, Depends, HTTPException
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import RedirectResponse
 from typing import List, Dict, Union
 import cv2
+import algorithms_
+import base64
+from PIL import Image
+import io
 import numpy as np
 from . import auth
 import crud
@@ -26,44 +30,57 @@ router = APIRouter(
 )
 templates = Jinja2Templates(directory="templates")
 
-@router.get("/postprandial-sugar-control")
-async def fullness_sugar_control(request: Request, db:Session=Depends(get_db)):
-
-    # Get the user from the session
+    
+@router.post("/add-postprandial-glucose-last-meal")
+async def add_postprandial_glucose_last_meal(request: Request, db:Session=Depends(get_db)):
     user = await auth.get_current_user(request)
+    form_data = await request.form()
+    postprandial_glucose  = form_data.get("postprandial_glucose")
+    postprandial_glucose = crud.update_postprandial_glucose_row(db, user["id"], postprandial_glucose)
+    print(postprandial_glucose)
+    return RedirectResponse("/home/", status_code=status.HTTP_302_FOUND)
 
-    last_meals = crud.check_fullness_last_3_meals(db, user["id"])
-    if last_meals:
-        # If there are meals without fullness sugar entered, render a template
-        # that includes the details of those meals and a form to allow the user
-        # to enter the fullness sugar
-        return templates.TemplateResponse(
-            "fullness_sugar.html",
-            {"request": request, "last_meals": last_meals},
-        )
-    else:
-        # If all meals have fullness sugar entered, redirect the user to the
-        # home page
-        return RedirectResponse(url="/home", status_code=status.HTTP_302_FOUND)
-            
 
 @router.get("/home/newmeal")
 async def newmeal_page(request: Request):
     return templates.TemplateResponse("newmeal.html", {"request": request})
+ 
+
+@router.get('/home/newmeal/open-camera')
+async def camera_ac(request: Request):
+    return templates.TemplateResponse("camera.html", {"request": request})
 
 
 @router.post("/meal/nutritions/")
 async def meal_info(request: Request):
-    form_data = await request.form()
-    form_name = form_data.get("form_name")
+    image_data = await request.form()
+    user = await auth.get_current_user(request)
 
-    if form_name == "typing":
-        response = templates.TemplateResponse("foods.html", {"request": request})
-    elif form_name == "send_image":
-        food_image = form_data.get("food_image").file
-        #image = cv2.imdecode(np.frombuffer(food_image.read(), np.uint8), cv2.IMREAD_UNCHANGED)
-        detected_foods = ["bulgur","apple","chicken"]
-        response = templates.TemplateResponse("foods.html", {"request": request, "objects": detected_foods})
+    # If image come from Camera
+    if "camera_image" in image_data:
+        data_uri = image_data.get("camera_image")
+
+        # Convert data URI to binary data
+        binary_data = io.BytesIO(base64.b64decode(data_uri.split(',')[1]))
+
+        # Open binary data as image using Pillow
+        img = Image.open(binary_data)
+
+        # Save image as PNG file
+        #img.save('camera.png', 'PNG')
+    
+    # If image come from Upload File
+    elif "uploaded_image" in image_data:
+        form = await request.form()
+        file = form['uploaded_image'].file
+        img = Image.open(file)
+        #image.save("upload.jpg", "PNG")
+    
+    else:
+        raise HTTPException(status_code=400, detail="No image found in the request.")
+    
+    detected_foods = algorithms_.detect_foods(img, user_id=user["id"])
+    response = templates.TemplateResponse("detected_foods.html", {"request": request, "objects": detected_foods})
     return response
 
 
@@ -81,6 +98,7 @@ async def temporary_storage(request: Request, db:Session=Depends(get_db)):
         request.session["extra_labels"] = ["Bed Time", "Wake Up Time"]
 
     return {"Status": "Redirecting to /meal/user-log in foods.js code"}
+
 
 @router.get("/meal/user-log/")
 async def user_log(request: Request):
@@ -104,14 +122,13 @@ async def record_newmeal(request: Request, db:Session=Depends(get_db)):
     return RedirectResponse(url="/newmeal/similar-meals", status_code=status.HTTP_302_FOUND)
     #Redirect Response to similar_meals
 
+
+
 #Will be Updated
 @router.get("/newmeal/similar-meals")
 async def show_similar_meals(request: Request, db:Session=Depends(get_db)):
     user = await auth.get_current_user(request)
-    #request session clear eklemeyi unutma
-    query = crud.check_fullness_last_3_meals(db,user["id"] )
-    for q in query:
-        print(q.fullness_sugar)
-    return "Finish"
 
-
+    #getting similar meals, and ask user how insulin dose he will get (postprandial.html ile benzer bir html oluşturabilirsin)
+    #algorithms_.get_similar_meals(db, user["id"])
+    return templates.TemplateResponse("similar_meals.html", {"request": request})
