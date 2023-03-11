@@ -38,44 +38,18 @@ async def add_postprandial_glucose_last_meal(request: Request, db:Session=Depend
     postprandial_glucose = crud.update_postprandial_glucose_row(db, user["id"], postprandial_glucose)
     print(postprandial_glucose)
     return RedirectResponse("/home/", status_code=status.HTTP_302_FOUND)
-
-
-@router.get("/home/newmeal")
-async def newmeal_page(request: Request):
-    return templates.TemplateResponse("newmeal.html", {"request": request})
  
-
-@router.get('/home/newmeal/open-camera')
-async def camera_ac(request: Request):
-    return templates.TemplateResponse("camera.html", {"request": request})
-
 
 @router.post("/meal/nutritions/")
 async def meal_info(request: Request):
     image_data = await request.form()
     user = await auth.get_current_user(request)
-
-    # If image come from Camera
-    if "camera_image" in image_data:
-        data_uri = image_data.get("camera_image")
-
-        # Convert data URI to binary data
-        binary_data = io.BytesIO(base64.b64decode(data_uri.split(',')[1]))
-
-        # Open binary data as image using Pillow
-        img = Image.open(binary_data)
-
-        # Save image as PNG file
-        #img.save('camera.png', 'PNG')
-    
-    # If image come from Upload File
-    elif "uploaded_image" in image_data:
+    try:
         form = await request.form()
         file = form['uploaded_image'].file
         img = Image.open(file)
         #image.save("upload.jpg", "PNG")
-    
-    else:
+    except:
         raise HTTPException(status_code=400, detail="No image found in the request.")
     
     detected_foods = algorithms_.detect_foods(img, user_id=user["id"])

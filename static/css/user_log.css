@@ -35,3 +35,14 @@ body {
     font-size: 16px;
     cursor: pointer;
   }
+
+  @media screen and (max-width: 767px) {
+    label,
+    select,
+    input[type="text"],
+    input[type="time"],
+    input[type="number"] {
+      width: 100%;
+      font-size: 16px;
+    }
+  }
