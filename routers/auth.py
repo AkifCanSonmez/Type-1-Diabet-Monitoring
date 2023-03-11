@@ -31,6 +31,8 @@ def get_db():
 
 
 async def authenticate_user(username, password, db):
+    username = username.lower()
+    password = password.lower()
     user = db.query(Account).filter(Account.username == username).first()
     if user:
         if password != user.user_password:
@@ -70,7 +72,7 @@ async def login(request: Request):
     return templates.TemplateResponse("login.html", {"request": request})
 
 
-@router.post("/redirect/")
+@router.post("/redirect")
 async def home(request:Request, username: str = Form(...), password: str = Form(...),
                db: Session = Depends(get_db)):
 
