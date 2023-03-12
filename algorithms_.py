@@ -3,6 +3,7 @@ sys.path.append("..")
 from sqlalchemy.orm import Session, contains_eager
 from sqlalchemy import and_, or_, func
 import tables
+from decimal import Decimal
 from tables import MealNutrition, Account, MealRecord, UserLog, NutritionDB
 import os
 import torch
@@ -51,8 +52,8 @@ def get_similar_meals(db:Session, user_id):
             and_(MealNutrition.carbohydrate_source_main == new_meal.nutritions.carbohydrate_source_main,
                 MealNutrition.carbohydrate_sources == new_meal.nutritions.carbohydrate_sources,
                 or_(
-                    MealNutrition.carbohydrate_amount_total >= (new_meal.nutritions.carbohydrate_amount_total * 0.9),
-                    MealNutrition.carbohydrate_amount_total <= (new_meal.nutritions.carbohydrate_amount_total * 1.10)
+                    MealNutrition.carbohydrate_amount_total >= (new_meal.nutritions.carbohydrate_amount_total * Decimal("0.9")),
+                    MealNutrition.carbohydrate_amount_total <= (new_meal.nutritions.carbohydrate_amount_total * Decimal("1.10"))
                 ),
                 func.abs(UserLog.postprandial_glucose - UserLog.fasting_glucose) <= (UserLog.fasting_glucose * 0.15)
                 )
@@ -73,8 +74,8 @@ def get_similar_meals(db:Session, user_id):
             and_(MealNutrition.carbohydrate_source_main == new_meal.nutritions.carbohydrate_source_main,
                 MealNutrition.carbohydrate_sources != new_meal.nutritions.carbohydrate_sources,
                 or_(
-                    MealNutrition.carbohydrate_amount_total >= (new_meal.nutritions.carbohydrate_amount_total * 0.9),
-                    MealNutrition.carbohydrate_amount_total <= (new_meal.nutritions.carbohydrate_amount_total * 1.10)
+                    MealNutrition.carbohydrate_amount_total >= (new_meal.nutritions.carbohydrate_amount_total * Decimal("0.9")),
+                    MealNutrition.carbohydrate_amount_total <= (new_meal.nutritions.carbohydrate_amount_total * Decimal("1.10"))
                 ),                                         
                 func.abs(UserLog.postprandial_glucose - UserLog.fasting_glucose) <= (UserLog.fasting_glucose * 0.15)
                 )
