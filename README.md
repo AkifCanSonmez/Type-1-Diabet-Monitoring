@@ -9,7 +9,7 @@
 3. [What Does This Algorithm Do?](#what-does-this-algorithm-do)
 4. [How the Algorithm Works](#how-the-algorithm-works)
 
-Why I Created This Program
+## Why I Created This Program
 
 One of the biggest challenges faced by individuals with Type 1 diabetes is managing blood sugar fluctuations. This issue typically arises when patients are unable to accurately calculate the insulin dosage required before a meal. This problem can lead to dangerous situations, such as hypoglycemia.
 
@@ -21,15 +21,15 @@ Other factors influencing insulin sensitivity include sleep patterns, meal inter
 
 The aim of this project is to facilitate practical data collection for patients and to ensure that factors believed to impact insulin dosage, but often overlooked, are also recorded. By analyzing this data, both pre-meal and on a weekly or monthly basis, blood sugar fluctuations can be better controlled. The provided analyses will enable healthcare professionals to work with a broader range of data. Additionally, through simple analyses, patients will be able to collaborate with healthcare professionals in determining their required insulin dosage.  
 
-How the Program Works
+## How the Program Works
 
 The program has three main functions: 1) real-time meal-based operations, 2) weekly and monthly data analysis, and 3) meal recommendations for users.
 
-Real-time Meal-based Functions:
+### Real-time Meal-based Functions
 
 The user weighs and takes a photo of all raw ingredients before a meal. The photo is processed in the back-end, and food detection is performed using a YOLOv5 model to identify the ingredients. The user then enters the weight of each ingredient, and the meal information is saved. After the meal is prepared, the user enters pre-meal blood sugar, hunger level, and activity status. These data points are processed, and up to 3 similar meals from the database are retrieved and displayed along with the new meal information. For Type 1 diabetic bodybuilders, calorie, carbohydrate, protein, and fat amounts are also provided. The user decides the insulin dosage, enters it, and adds a new meal. Two hours after the meal, the user enters their post-meal blood sugar, completing the data entry.
 
-Analyses:
+### Analyses
 
 Three main analyses are performed. 1) A graph displays the user's post-meal blood sugar levels within a specified date range. Points on the graph are marked with green (good), orange (low risk), or red (high risk) markers. Users can click on markers to access general information about the meal, helping them adjust insulin dosages for meals with risky blood sugar levels.
 
@@ -37,11 +37,11 @@ The second analysis shows the patient's 3-month pre- and post-meal blood sugar l
 
 The third analysis is for Type 1 diabetic bodybuilders, providing a one-month nutrition analysis to track calorie and nutrient intake for weight gain or loss goals.
 
-Meal Recommendations:
+### Meal Recommendations
 
 The user inputs current blood sugar, time, and activity levels, and the back-end processes this information to display up to 5 meals with excellent post-meal blood sugar results from the database. The user can prepare a new meal using these recommendations. Additionally, up to 5 meals with poor post-meal blood sugar results are shown. The user can repeat these meals with an adjusted insulin dosage and save them to the database. This way, the user can determine the appropriate insulin dosage for similar meals in the future and avoid hyperglycemia risk.
 
-What Does This Algorithm Do?
+## What Does Get Similar Meals Algorithm Do?
 
 As mentioned earlier, there are many factors that affect insulin sensitivity. In particular, the glycemic index of foods and pre-meal activity levels play significant roles in determining the required insulin dosage.
 
@@ -51,7 +51,7 @@ Another crucial factor is the glycemic index. Foods with a high glycemic index r
 
 Several other factors, such as meal timing, sleep and wake-up times, and pre-meal fasting levels, also impact insulin sensitivity. This program records these factors and displays data with meal information similar to the user's current meal to help them calculate their pre-meal insulin needs. This makes it easier to prevent dangerous situations like hypoglycemia.
 
-How the Algorithm Works
+## How the Get Similar Meals Algorithm Works
 
 The user's most recently added meal is retrieved from the database. To do this, the MealRecord table is filtered based on the user's ID, and the latest record is selected.
 To choose similar meals, the MealRecord, MealNutrition, and UserLog tables are merged. This merging process is performed to select meals similar to the user's most recent meal. In this step, the three tables are combined, and the relevant columns are selected.
