@@ -1,4 +1,4 @@
-# Type-1-Diabetes-Monitoring
+# Type 1 Diabetes Monitoring
 
 ## Table of Contents
 1. [Why I Created This Program](#why-i-created-this-program)
