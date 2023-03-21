@@ -53,20 +53,27 @@ Several other factors, such as meal timing, sleep and wake-up times, and pre-mea
 
 ## How the Get Similar Meals Algorithm Works
 
-The user's most recently added meal is retrieved from the database. To do this, the MealRecord table is filtered based on the user's ID, and the latest record is selected.
-To choose similar meals, the MealRecord, MealNutrition, and UserLog tables are merged. This merging process is performed to select meals similar to the user's most recent meal. In this step, the three tables are combined, and the relevant columns are selected.
+The user's most recently added meal is retrieved from the database. To do this, the `MealRecord` table is filtered based on the user's ID, and the latest record is selected.
+
+To choose similar meals, the `MealRecord`, `MealNutrition`, and `UserLog` tables are merged. This merging process is performed to select meals similar to the user's most recent meal. In this step, the three tables are combined, and the relevant columns are selected.
+
 The following features are considered when selecting similar meals:
-• Sources of carbohydrates
-• Total carbohydrate amount
-• Main carbohydrate amount
-• Fasting and postprandial glucose values
-• Type and duration of activity
-• Differences between carbohydrate sources and amounts in similar meals and the last meal
+- Sources of carbohydrates
+- Total carbohydrate amount
+- Main carbohydrate amount
+- Fasting and postprandial glucose values
+- Type and duration of activity
+- Differences between carbohydrate sources and amounts in similar meals and the last meal
+
 The selection of similar meals is carried out sequentially based on different scenarios. Each scenario selects similar meals based on specific features. The scenarios include:
-• Meals with completely matching carbohydrate sources and amounts are chosen. In this scenario, a difference of less than 10% in the main carbohydrate amount is expected.
-• Meals with matching main carbohydrate sources are chosen. In this scenario, a difference of less than 10% in the main carbohydrate amount is expected.
-• Meals with only matching carbohydrate amounts are chosen. In this scenario, a difference of less than 10% in the total carbohydrate amount is expected.
-• Meals with different main carbohydrate sources are chosen. In this scenario, a difference of less than 15% in glycemic indices of the main carbohydrate sources is expected. Additionally, a difference of less than 10% in the total carbohydrate amount is expected.
+
+1. Meals with completely matching carbohydrate sources and amounts are chosen. In this scenario, a difference of less than 10% in the main carbohydrate amount is expected.
+2. Meals with matching main carbohydrate sources are chosen. In this scenario, a difference of less than 10% in the main carbohydrate amount is expected.
+3. Meals with only matching carbohydrate amounts are chosen. In this scenario, a difference of less than 10% in the total carbohydrate amount is expected.
+4. Meals with different main carbohydrate sources are chosen. In this scenario, a difference of less than 15% in glycemic indices of the main carbohydrate sources is expected. Additionally, a difference of less than 10% in the total carbohydrate amount is expected.
+
 The selected similar meals are stored in a dictionary, considering features like carbohydrate sources, total carbohydrate amount, fasting glucose value, novorapid dose, and postprandial glucose value.
-Finally, the dictionary is returned to display similar meals to the user.
-These steps ensure that the user's most recently added meal is compared with other meals in the database, and similar meals are selected, allowing the user to decide how much insulin to inject based on similar meals. In conclusion, this code serves as a tool to help users determine their insulin dosage. By selecting similar meals, users are provided with suggestions, enabling them to make more accurate decisions for diabetes management.
+
+Finally, the dictionary is returned to display similar meals to the user. These steps ensure that the user's most recently added meal is compared with other meals in the database, and similar meals are selected, allowing the user to decide how much insulin to inject based on similar meals.
+
+In conclusion, this code serves as a tool to help users determine their insulin dosage. By selecting similar meals, users are provided with suggestions, enabling them to make more accurate decisions for diabetes management.
