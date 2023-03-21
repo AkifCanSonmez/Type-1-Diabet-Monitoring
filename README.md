@@ -7,7 +7,7 @@
     2. [Analyses](#analyses)
     3. [Meal Recommendations](#meal-recommendations)
 3. [What Does Get Similar Meals Algorithm Do?](#what-does-get-similar-meals-algorithm-do)
-4. [How the Get Similar Meals Algorithm Works](#how-the-algorithm-works)
+4. [How the Get Similar Meals Algorithm Works](#how-the-get-similar-meals-algorithm-works)
 
 ## Why I Created This Program
 
