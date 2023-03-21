@@ -8,6 +8,8 @@
     3. [Meal Recommendations](#meal-recommendations)
 3. [What Does Get Similar Meals Algorithm Do?](#what-does-get-similar-meals-algorithm-do)
 4. [How the Get Similar Meals Algorithm Works](#how-the-get-similar-meals-algorithm-works)
+5. [Technologies Used](#technologies-used)
+
 
 ## Why I Created This Program
 
@@ -77,3 +79,14 @@ The selected similar meals are stored in a dictionary, considering features like
 Finally, the dictionary is returned to display similar meals to the user. These steps ensure that the user's most recently added meal is compared with other meals in the database, and similar meals are selected, allowing the user to decide how much insulin to inject based on similar meals.
 
 In conclusion, this code serves as a tool to help users determine their insulin dosage. By selecting similar meals, users are provided with suggestions, enabling them to make more accurate decisions for diabetes management.
+
+## Technologies Used
+
+- **FastAPI**: I chose FastAPI as the back-end framework for its modern, high-performance capabilities. It allowed me to create a responsive and efficient API for the application.
+- **PostgreSQL**: To store and manage the application's data, I used PostgreSQL, a powerful, open-source object-relational database system.
+- **YOLOv5**: I implemented the state-of-the-art, real-time object detection model YOLOv5 to identify ingredients in the user-submitted meal images.
+- **Python**: I selected Python as the main programming language for developing the application because of its versatility and the rich ecosystem of libraries available.
+- **HTML/CSS**: I utilized HTML and CSS to create and style the user interface of the web application.
+- **Docker**: To simplify deployment and management, I leveraged Docker for containerizing the application and its dependencies, ensuring easy deployment and scaling.
+- **Amazon AWS EC2**: I deployed the application on Amazon AWS EC2, a cloud-based computing platform, to guarantee scalability and reliability.
+- **SQLAlchemy**: To handle interactions between the application and the PostgreSQL database, I employed SQLAlchemy, a popular SQL toolkit and Object-Relational Mapping (ORM) library for Python.
