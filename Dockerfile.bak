@@ -1,7 +1,7 @@
 # Use an official Python runtime as a parent image
 FROM python:3.10-slim-buster
 
-# Set the working diectory to /app
+# Set the working directory to /app
 WORKDIR /app
 
 # Install dependencies
