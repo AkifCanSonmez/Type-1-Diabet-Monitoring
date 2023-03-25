@@ -160,7 +160,7 @@ async def register_user(request: Request, db: Session = Depends(get_db)):
 
     account = Account(username=username, user_password=password, email=email, age=age,
                       weight=weight, height=height, body_fat=body_fat, activity=activity,
-                      created_on=datetime.now(), last_login=datetime.now()
+                      created_on=datetime.now()
                       )
 
     db.add(account)

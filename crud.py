@@ -171,12 +171,19 @@ def get_missing_new_meal(db: Session, user_id: int):
 
     if (latest_meal_record is not None
             and latest_meal_record.fk_user_log == None):
-        foods = latest_meal_record.nutritions.food_names.split(",")
-        quantities = latest_meal_record.nutritions.food_quantities.split(",")
 
+        foods = latest_meal_record.nutritions.food_names 
+        quantities = latest_meal_record.nutritions.food_quantities
         last_meal_nutrition_information = {}
-        for food, quantity in zip(foods, quantities):
-            last_meal_nutrition_information[food] = int(quantity)
+
+        if "," in foods:
+            foods = foods.split(",")
+            quantities = quantities.split(",")
+
+            for food, quantity in zip(foods, quantities):
+                last_meal_nutrition_information[food] = int(quantity)
+        else:
+            last_meal_nutrition_information[foods] = int(quantities)
 
         return last_meal_nutrition_information
     else:

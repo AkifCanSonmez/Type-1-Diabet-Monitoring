@@ -16,7 +16,6 @@ class Account(Base):
     body_fat = Column(Numeric(3, 1))
     activity = Column(String(20))
     created_on = Column(TIMESTAMP)
-    last_login = Column(TIMESTAMP)
 
 
 class NutritionDB(Base):
@@ -34,9 +33,8 @@ class NutritionDB(Base):
     vitamin_a_100g = Column(String)
     vitamin_c_100g = Column(String)
     iron_100g = Column(String)
-    glycemic_index = Column(Integer)
     calories_100g = Column(Numeric(6, 1))
-
+    glycemic_index = Column(Integer)
 
 class MealNutrition(Base):
     __tablename__ = 'meal_nutrition'

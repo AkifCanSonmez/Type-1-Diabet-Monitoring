@@ -6,14 +6,13 @@ import sys
 sys.path.append("..")
 
 model = torch.hub.load('ultralytics/yolov5', 'custom',
-                       path='last.pt', force_reload=False)
+                       path='last.pt', force_reload=True)
 
 
 # food_options is a list of foods whose information is in the nutrition database
-file = open("../predefined_classes.txt").readlines()
+file = open("predefined_classes.txt").readlines()
 food_options = [x.rstrip() for x in file]
 food_options.sort()
-
 # To processing some str values in db (Nutrition values are stored in str type like '60(g)', '17(g)' etc.)
 def convert_str_to_float(*params):
     converted_values = []
