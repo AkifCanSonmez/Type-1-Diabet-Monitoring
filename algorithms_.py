@@ -1,7 +1,10 @@
 import sys
 sys.path.append("..")
 from sqlalchemy.orm import Session, contains_eager
+from sqlalchemy import and_, or_, func
 import tables
+from decimal import Decimal
+from tables import MealNutrition, Account, MealRecord, UserLog, NutritionDB
 import os
 import torch
 
@@ -20,6 +23,7 @@ def get_similar_meals(db:Session, user_id):
     filter(tables.MealRecord.fk_user == user_id).\
     order_by(tables.MealRecord.record_id.desc()).first()
 
+        #meal time'ı da ekle
     meal_records = db.query(tables.MealRecord).\
         join(tables.MealRecord.nutritions).\
         options(
@@ -33,45 +37,88 @@ def get_similar_meals(db:Session, user_id):
             tables.MealRecord.record_id != new_meal.record_id)
     
 
+
+
     if len(meal_records.all()) > 0:
         similar_meals = []
-        #Carb Sources'e göre parçalandı
-        data_1 = meal_records.filter(tables.MealNutrition.carbohydrate_sources == new_meal.nutritions.carbohydrate_sources)
-        data_2 = meal_records.filter(tables.MealNutrition.carbohydrate_sources != new_meal.nutritions.carbohydrate_sources)
-        
-        control = True
-        # Carb Source Main'e göre parçalandı
-        for data in list(data_1, data_2):
-            sub_data_1 = data.filter(tables.MealNutrition.carbohydrate_source_main == new_meal.nutritions.carbohydrate_source_main)
-            sub_data_2 = data.filter(tables.MealNutrition.carbohydrate_source_main != new_meal.nutritions.carbohydrate_source_main)
-        
-            # Carb amount total'e göre parçalandı
-            for data in list(sub_data_1, sub_data_2):
-                sub_sub_data_1 = data.filter(tables.MealNutrition.carbohydrate_amount_total == new_meal.nutritions.carbohydrate_amount_total)
-                sub_sub_data_2 = data.filter(tables.MealNutrition.carbohydrate_amount_total != new_meal.nutritions.carbohydrate_amount_total)
-
-                # Fasting glukose göre parçalandı
-                for data in list(sub_sub_data_1, sub_sub_data_2):
-                    sub_sub_sub_data_1 = data.filter(tables.UserLog.fasting_glucose == new_meal.user_log.fasting_glucose)
-                    sub_sub_sub_data_2 = data.filter(tables.UserLog.fasting_glucose != new_meal.user_log.fasting_glucose)
-
-                    #Order By Postprandial
-                    for data in list(sub_sub_sub_data_1, sub_sub_sub_data_2):
-                        data.order_by(tables.UserLog.postprandial_glucose)
-                        if len(data.all()) > 0:
-                            similar_meals.append(data.all())
-
-                            if len(similar_meals) >= 3:
-                                break
-                        if not control:
-                            break
-                    if not control:
-                        break
-                if not control:
-                    break
-            if not control:
-                break
     
+    else:
+        return "There is no any similar meals"
+    
+    seq = 1
+    if seq == 1:               
+        #Carb sources main equal and carb sources not equal
+        data = meal_records.filter(
+            and_(MealNutrition.carbohydrate_source_main == new_meal.nutritions.carbohydrate_source_main,
+                MealNutrition.carbohydrate_sources == new_meal.nutritions.carbohydrate_sources,
+                or_(
+                    MealNutrition.carbohydrate_amount_total >= (new_meal.nutritions.carbohydrate_amount_total * Decimal("0.9")),
+                    MealNutrition.carbohydrate_amount_total <= (new_meal.nutritions.carbohydrate_amount_total * Decimal("1.10"))
+                ),
+                func.abs(UserLog.postprandial_glucose - UserLog.fasting_glucose) <= (UserLog.fasting_glucose * 0.15)
+                )
+        )
+
+        if data.count() > 0:
+            data = data.order_by(
+                    func.abs(UserLog.fasting_glucose - new_meal.user_log.fasting_glucose) 
+                )
+            similar_meals.append(data.limit(3).all())
+            return similar_meals
+        else:
+            seq = 2
+
+    if seq == 2:
+        #Carb source main equal and carb sources not equal
+        data = meal_records.filter(
+            and_(MealNutrition.carbohydrate_source_main == new_meal.nutritions.carbohydrate_source_main,
+                MealNutrition.carbohydrate_sources != new_meal.nutritions.carbohydrate_sources,
+                or_(
+                    MealNutrition.carbohydrate_amount_total >= (new_meal.nutritions.carbohydrate_amount_total * Decimal("0.9")),
+                    MealNutrition.carbohydrate_amount_total <= (new_meal.nutritions.carbohydrate_amount_total * Decimal("1.10"))
+                ),                                         
+                func.abs(UserLog.postprandial_glucose - UserLog.fasting_glucose) <= (UserLog.fasting_glucose * 0.15)
+                )
+        )
+
+        if data.count() > 0:
+            data = data.order_by(
+                    func.abs(UserLog.fasting_glucose - new_meal.user_log.fasting_glucose) 
+                )
+            similar_meals.append(data.limit(3).all())
+            return similar_meals
+        else:
+            seq = 3
+    
+    if seq == 3:
+        #Carb sources main not equal, so getting data where gi score in between new_meal gi score %90 percent         
+        data = meal_records.filter(
+            and_(
+                MealNutrition.carbohydrate_source_main != new_meal.nutritions.carbohydrate_source_main,
+                or_(
+                    func.abs(new_meal.nutritions.gi_score_of_main_carb - MealNutrition.gi_score_of_main_carb) 
+                                >= (new_meal.nutritions.gi_score_of_main_carb * 0.15)
+                ),
+                or_(
+                    func.abs(new_meal.nutritions.carbohydrate_amount_total - MealNutrition.carbohydrate_amount_total)
+                        >= (new_meal.nutritions.carbohydrate_amount_total * 0.15)
+                ),                                         
+                func.abs(UserLog.postprandial_glucose - UserLog.fasting_glucose) <= (UserLog.fasting_glucose * 0.15)
+                )
+        )
+
+        if data.count() > 0:
+            data = data.order_by(
+                    func.abs(UserLog.fasting_glucose - new_meal.user_log.fasting_glucose) 
+                )
+            
+            similar_meals.append(data.limit(3).all())
+            return similar_meals
+        else:
+            return "There is no any similar meals"
+    
+
+
 
 def detect_foods(img, user_id):
     #img.save(f"upload_{user_id}.png", "PNG")
@@ -80,27 +127,6 @@ def detect_foods(img, user_id):
     return detected_foods
     #os.remove(f"upload_{user_id}.png")
     
-               
-
-
-
-
-
-
-
-
-
-        
-
-        #print(len(meal_records))
-        #split meal_records
-        #"CODE ..."
-        
-        #if meal_records is not None:
-        
-    
-
-
 
 
 def calculate_minimum_nutrition_requirements(query):
