@@ -2,7 +2,8 @@ body {
   background-color: lightblue;
 }
 
-h1, h2 {
+h1,
+h2 {
   color: navy;
 }
 
@@ -11,7 +12,8 @@ table {
   margin-bottom: 20px;
 }
 
-th, td {
+th,
+td {
   padding: 8px;
   border: 1px solid black;
 }
@@ -48,7 +50,8 @@ input[type="number"] {
 
 /* Default button styles */
 button {
-  background-color: #4CAF50; /* Green */
+  background-color: #4CAF50;
+  /* Green */
   border: none;
   color: white;
   padding: 7px;
@@ -82,7 +85,8 @@ button {
 }
 
 #add-food-btn {
-  background-color: navy; /* Blue */
+  background-color: navy;
+  /* Blue */
 }
 
 #submit-button {

@@ -1,36 +1,128 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <link rel="stylesheet" type="text/css" href="{{url_for('static', path='/css/home.css')}}">
-    <meta charset="UTF-8">
-    <title>Health Tracker</title>
-  </head>
-  <body class="homebody">
-    <div>
-      <form action="/meal/nutritions/" method="post" enctype="multipart/form-data">
-        <input type="file" accept="image/*" name="uploaded_image" id="image_input">
-        <label class="btns" for="image_input" id="image_label">New Meal</label>
-        <button id="submit_button" style="display: none;">Submit Image</button>
-      </form>
 
-      <form action="/home/analytics/glucose-analysis/" method="get">
-        <button class="btns" id="analyticsBtn" type="submit">View Analytics</button>
+<head>
+  <link rel="stylesheet" type="text/css" href="{{url_for('static', path='/css/home.css')}}">
+  <meta charset="UTF-8">
+  <title>Health Tracker</title>
+</head>
+
+<body class="homebody">
+  <div>
+    {% if case == "continue_new_meal" %}
+    <form action="/continue-new-meal" method="get">
+      <button class="btns" id="continueNewMealBtn" type="submit">Continue New Meal</button>
     </form>
-    </div>
-    <script>
-      const imageInput = document.getElementById("image_input");
-      const imageLabel = document.getElementById("image_label");
-      const submitButton = document.getElementById("submit_button");
+    {% elif case == "add_postprandial_glucose" %}
+    <form action="/missing-postprandial-glucose" method="get">
+      <button class="btns" id="addPostprandialGlucoseBtn" type="submit">Add Postprandial Glucose</button>
+    </form>
+    {% elif case == "add_novorapid_dose" %}
+    <form action="/newmeal/similar-meals" method="get">
+      <button class="btns" id="addNovorapidDoseBtn" type="submit">Add Novorapid Dose</button>
+    </form>
+    {% else %}
+    <form action="/newmeal/detect-foods" method="post" enctype="multipart/form-data">
+      <input type="file" accept="image/*" name="uploaded_image" id="image_input">
+      <label class="btns" for="image_input" id="image_label">New Meal</label>
+      <button id="submit_button" style="display: none;">Submit Image</button>
+    </form>
+    {% endif %}
 
-      imageInput.addEventListener("change", () => {
-        if (imageInput.files.length > 0) {
-          imageLabel.innerHTML = "Change Image";
-          submitButton.style.display = "block";
-        } else {
-          imageLabel.innerHTML = "Upload Image";
-          submitButton.style.display = "none";
-        }
-      });
-    </script>
-  </body>
+    <form action="/home/analytics/glucose-analysis/" method="get">
+      <button class="btns" id="analyticsBtn" type="submit">View Analytics</button>
+    </form>
+
+    <form action="/home/meal-suggestions" method="get" id="suggestion-form">
+      <button class="btns" id="suggestionBtn" type="button" onclick="addInputFields()">Get Meal Suggestion</button>
+    </form>
+
+  </div>
+
+  <script>
+    const imageInput = document.getElementById("image_input");
+    const imageLabel = document.getElementById("image_label");
+    const submitButton = document.getElementById("submit_button");
+
+    function addInputFields() {
+      const suggestionBtn = document.getElementById("suggestionBtn");
+      suggestionBtn.style.display = "none";
+
+      const form = document.getElementById("suggestion-form");
+
+      const fastingLabel = document.createElement("label");
+      fastingLabel.setAttribute("for", "fasting-input");
+      fastingLabel.innerHTML = "Enter Fasting Sugar: ";
+
+      const fastingInput = document.createElement("input");
+      fastingInput.setAttribute("type", "number");
+      fastingInput.setAttribute("name", "fasting-glucose");
+      fastingInput.setAttribute("id", "fasting-input");
+      fastingInput.required = true;
+
+      const mealLabel = document.createElement("label");
+      mealLabel.setAttribute("for", "meal-time-input");
+      mealLabel.innerHTML = "Enter Meal Time:";
+
+      const mealInput = document.createElement("input");
+      mealInput.setAttribute("type", "time");
+      mealInput.setAttribute("name", "meal-time");
+      mealInput.setAttribute("id", "meal-time-input");
+      mealInput.setAttribute("placeholder", "HH:MM | e.g 07:30, 19:20");
+      mealInput.required = true;
+
+      const activityLabel = document.createElement("label");
+      activityLabel.setAttribute("for", "activity-input");
+      activityLabel.innerHTML = "Did you engage in physical activity before the meal? ";
+
+      const activityInput = document.createElement("select");
+      activityInput.setAttribute("name", "did-activity");
+      activityInput.setAttribute("id", "activity-input");
+
+      const activityOption1 = document.createElement("option");
+      activityOption1.setAttribute("value", "yes");
+      activityOption1.innerHTML = "Yes";
+      activityInput.appendChild(activityOption1);
+
+      const activityOption2 = document.createElement("option");
+      activityOption2.setAttribute("value", "no");
+      activityOption2.innerHTML = "No";
+      activityInput.appendChild(activityOption2);
+
+      form.appendChild(activityLabel);
+      form.appendChild(activityInput);
+      form.appendChild(document.createElement("br"));
+
+      const submitBtn = document.createElement("button");
+      submitBtn.innerHTML = "Submit";
+      submitBtn.setAttribute("type", "submit");
+      submitBtn.setAttribute("id", "submitBtn");
+
+      form.appendChild(fastingLabel);
+      form.appendChild(fastingInput);
+      form.appendChild(document.createElement("br"));
+      form.appendChild(mealLabel);
+      form.appendChild(mealInput);
+      form.appendChild(document.createElement("br"));
+      form.appendChild(submitBtn);
+    }
+
+    let previousFile = null;
+
+    imageInput.addEventListener("change", () => {
+      if (imageInput.files.length > 0) {
+        imageLabel.innerHTML = "Change Image";
+        submitButton.style.display = "block";
+        previousFile = imageInput.files[0];
+      } else if (previousFile) {
+        // Restore the previous file if no new image is selected
+        const dataTransfer = new DataTransfer();
+        dataTransfer.items.add(previousFile);
+        imageInput.files = dataTransfer.files;
+      }
+    });
+
+  </script>
+</body>
+
 </html>

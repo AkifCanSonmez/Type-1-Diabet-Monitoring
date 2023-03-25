@@ -7,6 +7,7 @@ body {
   color: #333;
 }
 
+
 /* Headers */
 h1,
 h2,
@@ -49,6 +50,15 @@ p {
   font-weight: bold;
 }
 
+/* Forms */
+form label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+  font-size: 16px;
+  color: rgba(64, 0, 255, 0.673);
+}
+
 form input[type="number"] {
   padding: 5px;
   border-radius: 5px;
@@ -87,44 +97,30 @@ form input[type="number"]:focus {
 
 .meal-row li {
   margin-bottom: 10px;
+
 }
 
-.side-buttons {
+.buttons {
   display: flex;
-  justify-content: flex-start;
-  align-items: center;
-  margin-top: -39px;
-  margin-left: 100px;
+  margin-top: 20px;
+  /* Add some space between the buttons and the previous element */
 }
 
-.remind-me-later,
-.delete {
+.yes,
+.no,
+.remind-me-later {
   margin-left: 10px;
+  /* Add some space between the buttons */
 }
 
-.enter {
+.yes {
   background-color: green;
-  margin-top: 10px;
 }
 
-.delete {
+.no {
   background-color: red;
 }
 
 .remind-me-later {
   background-color: orange;
-}
-
-.time-1-div {
-  font-family: Arial, sans-serif;
-  font-size: 20px;
-  font-weight: bold;
-  color: red;
-}
-
-.time-2-div {
-  font-family: Arial, sans-serif;
-  font-size: 20px;
-  font-weight: bold;
-  color: rgb(0, 184, 0);
 }

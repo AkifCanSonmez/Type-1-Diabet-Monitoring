@@ -1,19 +1,20 @@
+import crud
+from . import auth
+import numpy as np
+import io
+from PIL import Image
+import base64
+import utils_common
+from typing import List, Dict, Union
+from starlette.status import HTTP_303_SEE_OTHER
+from fastapi.responses import RedirectResponse
+from fastapi.templating import Jinja2Templates
+from fastapi import APIRouter, Request, Body, Form, UploadFile, status, Depends, HTTPException
+from sqlalchemy.orm import Session
+from database import SessionLocal
 import sys
 sys.path.append("..")
 
-from database import SessionLocal
-from sqlalchemy.orm import Session
-from fastapi import APIRouter, Request, Body, Form, UploadFile, status, Depends, HTTPException
-from fastapi.templating import Jinja2Templates
-from fastapi.responses import RedirectResponse
-from typing import List, Dict, Union
-import algorithms_
-import base64
-from PIL import Image
-import io
-import numpy as np
-from . import auth
-import crud
 
 def get_db():
     try:
@@ -22,6 +23,7 @@ def get_db():
     finally:
         db.close()
 
+
 router = APIRouter(
     prefix="",
     tags=["newmeal"],
@@ -29,79 +31,121 @@ router = APIRouter(
 )
 templates = Jinja2Templates(directory="templates")
 
-    
-@router.post("/add-postprandial-glucose-last-meal")
-async def add_postprandial_glucose_last_meal(request: Request, db:Session=Depends(get_db)):
-    user = await auth.get_current_user(request)
-    form_data = await request.form()
-    postprandial_glucose  = form_data.get("postprandial_glucose")
-    postprandial_glucose = crud.update_postprandial_glucose_row(db, user["id"], postprandial_glucose)
-    print(postprandial_glucose)
-    return RedirectResponse("/home/", status_code=status.HTTP_302_FOUND)
- 
 
-@router.post("/meal/nutritions/")
-async def meal_info(request: Request):
-    image_data = await request.form()
+@router.post("/newmeal/detect-foods")
+async def detect_foods(request: Request):
     user = await auth.get_current_user(request)
+    image_data = await request.form()
     try:
         form = await request.form()
         file = form['uploaded_image'].file
         img = Image.open(file)
-        #image.save("upload.jpg", "PNG")
+        # image.save("upload.jpg", "PNG")
     except:
-        raise HTTPException(status_code=400, detail="No image found in the request.")
-    
-    detected_foods = algorithms_.detect_foods(img, user_id=user["id"])
-    response = templates.TemplateResponse("detected_foods.html", {"request": request, "objects": detected_foods})
+        raise HTTPException(
+            status_code=400, detail="No image found in the request.")
+
+    detected_foods = utils_common.detect_foods(img, user_id=user["id"])
+    request.session["detected_foods"] = detected_foods
+
+    return RedirectResponse(url="/newmeal/nutritions", status_code=303)
+
+
+@router.get("/newmeal/nutritions")
+async def nutritions_page(request: Request, db: Session = Depends(get_db)):
+
+    detected_foods = request.session.get("detected_foods")
+
+    response = templates.TemplateResponse("detected_foods.html", {
+                                          "request": request, "objects": detected_foods, "food_options": utils_common.food_options})
     return response
 
 
-#This api will use /meal/typing-nutritions and /meal/nutritions to add inputs to session
-@router.post("/temporary-storage-for-inputs")
-async def temporary_storage(request: Request, db:Session=Depends(get_db)):
-    payload = await request.json()
-    request.session["foods_amounts"] = payload
+@router.post("/newmeal/nutritions")
+async def add_meal_nutritions(request: Request, db: Session = Depends(get_db)):
+    user = await auth.get_current_user(request)
+    form_data = await request.form()
+
+    action = form_data.get("action")
+
+    foods = form_data.getlist('foods')
+    amounts = form_data.getlist('amounts')
+    foods_n_amounts = dict(zip(foods, amounts))
+
+    if action == "save_and_exit":
+
+        # Adding foods and their amounts to database respect to current user
+        crud.save_nutritions_and_exit(db, user, foods_n_amounts)
+
+        return RedirectResponse(url="/logout", status_code=303)
+
+    elif action == "continue":
+
+        # For performance when user continue, adding nutritions information to session instead of db
+        request.session["foods_n_amounts"] = foods_n_amounts
+
+        return RedirectResponse(url="/newmeal/user-log/", status_code=303)
+
+
+@router.get("/newmeal/user-log/")
+async def user_log(request: Request, db: Session = Depends(get_db)):
     user = await auth.get_current_user(request)
 
-    #wake up time and bet time bars added session
-    bed_time = crud.get_bed_time_today(db,user["id"])
-    
+    bed_time = crud.get_bed_time_today(db, user["id"])
+
+    extra_labels = []
     if bed_time is None:
-        request.session["extra_labels"] = ["Bed Time", "Wake Up Time"]
+        extra_labels = ["Bed Time", "Wake Up Time"]
 
-    return {"Status": "Redirecting to /meal/user-log in foods.js code"}
-
-
-@router.get("/meal/user-log/")
-async def user_log(request: Request):
-    extra_labels = request.session.get("extra_labels", []) # use get method to safely retrieve the data
     return templates.TemplateResponse("user_log.html", {"request": request, "extra_labels": extra_labels})
 
-#add_meal olacak
+
 @router.post("/newmeal/add-todo")
-async def record_newmeal(request: Request, db:Session=Depends(get_db)):
-
-    #Control
+async def record_newmeal(request: Request, db: Session = Depends(get_db)):
+    # Control
     user = await auth.get_current_user(request)
-    if user is None:
-        return RedirectResponse(url="/", status_code=status.HTTP_302_FOUND)
-    
-    # Get the meal foods and user log inputs from the request
-    meal_foods_amounts = request.session.get("foods_amounts")
+
+    # getting user_log informations
     user_log = await request.form()
-  
-    print(crud.add_new_meal(db,user, meal_foods_amounts, user_log))
-    return RedirectResponse(url="/newmeal/similar-meals", status_code=status.HTTP_302_FOUND)
-    #Redirect Response to similar_meals
+
+    # If this True, adding new meal done without save_and_exit
+    if "foods_n_amounts" in request.session:
+
+        # Get the meal foods and user log inputs from the request
+        foods_n_amounts = request.session.get("foods_n_amounts")
+
+        # adding new meal and deleting session objects
+        crud.add_new_meal(db, user, foods_n_amounts, dict(user_log))
+
+        # To avoid duplicating new data
+        del request.session["foods_n_amounts"]
+
+    else:
+        # update user_log on new meal
+        crud.update_new_meal_user_log(db, user, user_log)
+
+    return RedirectResponse(url="/newmeal/similar-meals", status_code=303)
 
 
-
-#Will be Updated
 @router.get("/newmeal/similar-meals")
-async def show_similar_meals(request: Request, db:Session=Depends(get_db)):
+async def show_similar_meals(request: Request, db: Session = Depends(get_db)):
     user = await auth.get_current_user(request)
 
-    #getting similar meals, and ask user how insulin dose he will get (postprandial.html ile benzer bir html oluşturabilirsin)
-    #algorithms_.get_similar_meals(db, user["id"])
-    return templates.TemplateResponse("similar_meals.html", {"request": request})
+    # getting similar meals, and ask user how insulin dose he will get (postprandial.html ile benzer bir html oluşturabilirsin)
+    # Also last meal information retrieve to show user to compare
+    similar_meals = crud.get_similar_meals(db, user["id"])
+
+    new_meal = crud.get_last_meal_record(db, user["id"])
+
+    return templates.TemplateResponse("similar_meals.html", {"request": request, "similar_meals": similar_meals,
+                                                             "new_meal": new_meal})
+
+
+@router.post("/newmeal/add-novorapid-dose")
+async def update_novorapid_dose(request: Request, db: Session = Depends(get_db)):
+    user = await auth.get_current_user(request)
+    form_data = await request.form()
+
+    novorapid_dose = form_data["units"]
+    crud.update_novorapid_dose(db, user["id"], novorapid_dose)
+    return RedirectResponse(url="/home", status_code=303)

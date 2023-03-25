@@ -1,20 +1,22 @@
 body {
-    background-color: rgb(217, 250, 167);
-  }
-  
-  h1,h2 {
+  background-color: rgb(217, 250, 167);
+}
+
+h1,
+h2 {
   text-align: center;
 }
 
-  img {
-    max-width: 800px;
-    height: auto;
+img {
+  max-width: 800px;
+  height: auto;
 }
 
 table {
   width: 300%;
   max-width: 800px;
-  margin: auto; /* Tabloyu ortala */
+  margin: auto;
+  /* Tabloyu ortala */
   border-collapse: collapse;
   margin-bottom: 20px;
   background-color: #f2f2f2;
@@ -27,20 +29,22 @@ td {
   text-align: center;
   vertical-align: middle;
   font-weight: bold;
-  color: white;
-  background-color: cornflowerblue;
+  color: black;
+  background-color: whitesmoke;
   font-size: 18px;
 }
 
 th {
   padding: 8px;
   border: 1px solid black;
-  background-color: whitesmoke;
+  background-color: rgb(255, 255, 143);
   color: black;
   font-size: 18px;
 }
 
-.glucose.green, .glucose.orange, .glucose.red {
+.glucose.green,
+.glucose.orange,
+.glucose.red {
   color: whitesmoke;
   font-size: 20px;
 }
@@ -50,10 +54,34 @@ th {
 }
 
 .glucose.orange {
-      background-color: #ffa11e;
+  background-color: #f6950d;
 }
 
-.glucose.red {  
-      background-color: red ;
+.glucose.red {
+  background-color: red;
 }
 
+#range-select {
+  font-weight: bold;
+  font-size: 16px;
+  border-radius: 20px;
+  border: 2px solid #ccc;
+  padding: 10px;
+  width: 150px;
+  color: #333;
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="8" height="8" viewBox="0 0 8 8"><path fill="%23333" d="M0 2.25L4 6.25L8 2.25H0Z"/></svg>') !important;
+  background-position: calc(100% - 10px) center;
+  background-repeat: no-repeat;
+}
+
+#range-select option {
+  font-size: 16px;
+  font-weight: bold;
+  color: #333;
+}
+
+#range-select option:checked {
+  font-weight: bold;
+}

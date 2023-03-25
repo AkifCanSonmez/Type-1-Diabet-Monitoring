@@ -3,7 +3,6 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
 from database import Base
 
-#UserLog'a Lantus Column Ekle
 
 class Account(Base):
     __tablename__ = 'account'
@@ -18,6 +17,7 @@ class Account(Base):
     activity = Column(String(20))
     created_on = Column(TIMESTAMP)
     last_login = Column(TIMESTAMP)
+
 
 class NutritionDB(Base):
     __tablename__ = 'nutritions_db'
@@ -35,7 +35,8 @@ class NutritionDB(Base):
     vitamin_c_100g = Column(String)
     iron_100g = Column(String)
     glycemic_index = Column(Integer)
-    calories_100g = Column(Numeric(6,1))
+    calories_100g = Column(Numeric(6, 1))
+
 
 class MealNutrition(Base):
     __tablename__ = 'meal_nutrition'
@@ -48,6 +49,9 @@ class MealNutrition(Base):
     carbohydrate_source_main = Column(String)
     carbohydrate_amount_main = Column(Numeric(5, 1))
     gi_score_of_main_carb = Column(Integer)
+    food_names = Column(String)
+    food_quantities = Column(Integer)
+
 
 class UserLog(Base):
     __tablename__ = 'user_log'
@@ -62,11 +66,13 @@ class UserLog(Base):
     bed_time = Column(TIMESTAMP)
     wake_up_time = Column(TIMESTAMP)
 
+
 class MealRecord(Base):
     __tablename__ = 'meal_record'
     record_id = Column(Integer, primary_key=True)
     fk_user = Column(Integer, ForeignKey('account.pk_user'))
-    fk_meal_nutritions = Column(Integer, ForeignKey('meal_nutrition.pk_meal_nutrition'))
+    fk_meal_nutrition = Column(Integer, ForeignKey(
+        'meal_nutrition.pk_meal_nutrition'))
     fk_user_log = Column(Integer, ForeignKey('user_log.pk_user_log'))
     user = relationship('Account')
     nutritions = relationship('MealNutrition')
