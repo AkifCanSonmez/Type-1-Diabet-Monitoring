@@ -48,7 +48,7 @@ class MealNutrition(Base):
     carbohydrate_amount_main = Column(Numeric(5, 1))
     gi_score_of_main_carb = Column(Integer)
     food_names = Column(String)
-    food_quantities = Column(Integer)
+    food_quantities = Column(String)
 
 
 class UserLog(Base):

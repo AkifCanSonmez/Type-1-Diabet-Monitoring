@@ -134,7 +134,7 @@ async def show_similar_meals(request: Request, db: Session = Depends(get_db)):
     # getting similar meals, and ask user how insulin dose he will get (postprandial.html ile benzer bir html oluşturabilirsin)
     # Also last meal information retrieve to show user to compare
     similar_meals = crud.get_similar_meals(db, user["id"])
-
+    print(similar_meals)
     new_meal = crud.get_last_meal_record(db, user["id"])
 
     return templates.TemplateResponse("similar_meals.html", {"request": request, "similar_meals": similar_meals,
