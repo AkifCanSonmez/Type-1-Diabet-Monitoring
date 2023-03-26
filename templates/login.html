@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Login Page</title>
+  <link rel="stylesheet" type="text/css" href="{{url_for('static', path='/css/login.css') }}">
+  <meta charset="UTF-8"> <!--Türkçe karakter-->
+  <meta name="viewport" content="width=device-width" , initial-scale="1.0"> <!--Telefon ve bilgisayar width oto ayar-->
+</head>
+
+<div class="login-page">
+  <form class="login-form" action="/create-access-token" method="post">
+      <label for="username">Username:</label>
+      <input class="login-bar" type="text" id="username" name="username">
+      <br>
+      <label for="password">Password:</label>
+      <input class="login-bar" type="password" id="password" name="password">
+      <br><br>
+      {% if msg %}
+        <div class="error-message">{{ msg }}!</div>
+      {% endif %}
+      <div class="button-container">
+          <input class="login-button" type="submit" value="Login">
+          <input class="register-button" type="button" value="Register" onclick="window.location.href='/register'">
+      </div>
+  </form>
+</div>
+
+</html>

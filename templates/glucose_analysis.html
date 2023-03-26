@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Glucose Analysis</title>
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static', path='/css/glucose_analysis.css') }}">
+  <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+</head>
+
+<body>
+  <h1>Glucose Graphic</h1>
+  <form method="get" action="">
+    <select id="range-select" name="range" onchange="this.form.submit()">
+      {% for option in range_options %}
+      {% if option.value == range_value.value %}
+      <option value="{{ option.value }}" selected>{{ option.label }}</option>
+      {% else %}
+      <option value="{{ option.value }}">{{ option.label }}</option>
+      {% endif %}
+      {% endfor %}
+    </select>
+  </form>
+  {{fig_html|safe}}
+
+  <div class="container">
+    <div class="table-wrapper">
+      <h2>Average Glucose Table</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Month</th>
+            <th>Average Fasting Glucose</th>
+            <th>Average Postprandial Glucose</th>
+            <th>HbA1c</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for i in range(query|length) %}
+          <tr>
+            <td>{{ query[i].month.strftime('%B %Y') }}</td>
+            <td
+              class="glucose {% if query[i].avg_fasting_glucose >= 70 and query[i].avg_fasting_glucose <= 130 %}green{% elif query[i].avg_fasting_glucose > 130 and query[i].avg_fasting_glucose <= 160 %}orange{% else %}red{% endif %}">
+              {{ query[i].avg_fasting_glucose }}</td>
+            <td
+              class="glucose {% if query[i].avg_postprandial_glucose >= 90 and query[i].avg_postprandial_glucose <= 140 %}green{% elif query[i].avg_postprandial_glucose > 140 and query[i].avg_postprandial_glucose <= 200 %}orange{% else %}red{% endif %}">
+              {{ query[i].avg_postprandial_glucose }}</td>
+            <td
+              class="glucose {% if hba1c_list[i][1] >= 5.5 and hba1c_list[i][1] <= 7 %}green{% elif hba1c_list[i][1] > 7 and hba1c_list[i][1] <= 8 %}orange{% else %}red{% endif %}">
+              {{ hba1c_list[i][1] }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      <h2>Nutrition Analysis</h2>
+      <table>
+        <tr>
+          <th>Month</th>
+          <th>Avg Calories</th>
+          <th>Avg Carbs</th>
+          <th>Avg Protein</th>
+          <th>Avg Fat</th>
+        </tr>
+        {% for row in avg_nutritions %}
+        <tr>
+          <td>{{ row.month.strftime('%B %Y') }}</td>
+          <td>{{ row.avg_calories }}</td>
+          <td>{{ row.avg_carbs }}</td>
+          <td>{{ row.avg_protein }}</td>
+          <td>{{ row.avg_fat }}</td>
+        </tr>
+        {% endfor %}
+      </table>
+
+</body>
+
+</html>

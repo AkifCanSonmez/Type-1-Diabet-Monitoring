@@ -1,0 +1,126 @@
+/* Body */
+body {
+  background-color: rgb(175, 240, 76);
+  font-family: Arial, sans-serif;
+  font-size: 16px;
+  line-height: 1.5;
+  color: #333;
+}
+
+
+/* Headers */
+h1,
+h2,
+h3 {
+  color: #3E606F;
+}
+
+/* Links */
+a {
+  color: #3E606F;
+  text-decoration: none;
+}
+
+a:hover {
+  color: #558C8C;
+}
+
+.meal-row label,
+.meal-row span {
+  font-weight: bold;
+}
+
+/* Buttons */
+button {
+  background-color: #558C8C;
+  font-weight: bold;
+  border: none;
+  color: #fff;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+button:hover {
+  background-color: #3E606F;
+}
+
+p {
+  font-weight: bold;
+}
+
+/* Forms */
+form label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+  font-size: 16px;
+  color: rgba(64, 0, 255, 0.673);
+}
+
+form input[type="number"] {
+  padding: 5px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  width: 100%;
+  font-size: 20px;
+}
+
+form input[type="number"]:focus {
+  outline: none;
+  border-color: #558C8C;
+}
+
+/* Containers */
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 5px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.meal-row {
+  margin-bottom: 20px;
+  padding: 10px;
+  background-color: #E0EAEF;
+  border-radius: 5px;
+}
+
+.meal-row ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.meal-row li {
+  margin-bottom: 10px;
+
+}
+
+.buttons {
+  display: flex;
+  margin-top: 20px;
+  /* Add some space between the buttons and the previous element */
+}
+
+.yes,
+.no,
+.remind-me-later {
+  margin-left: 10px;
+  /* Add some space between the buttons */
+}
+
+.yes {
+  background-color: green;
+}
+
+.no {
+  background-color: red;
+}
+
+.remind-me-later {
+  background-color: orange;
+}
