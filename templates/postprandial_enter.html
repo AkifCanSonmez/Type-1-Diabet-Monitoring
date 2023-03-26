@@ -13,19 +13,19 @@
     }
 
     function checkTimeAndEnable() {
-      const mealTime = new Date("{{ data.user_log.meal_time }}");
+      const mealTime = new Date("{{ data.user_log.meal_time }}").toISOString();
       const currentTime = new Date();
       const minimumInterval = 2 * 60 * 60 * 1000;
-      const timeRemaining = minimumInterval - (currentTime - mealTime);
+      const timeRemaining = minimumInterval - (currentTime - new Date(mealTime));
 
       if (timeRemaining <= 0) {
-        document.getElementById("postprandialGlucoseInput").disabled = false;
-        document.getElementById("submitButton").disabled = false;
-        document.getElementById("ready").textContent = "You can now enter your postprandial glucose!!";
+      document.getElementById("postprandialGlucoseInput").disabled = false;
+      document.getElementById("submitButton").disabled = false;
+      document.getElementById("ready").textContent = "You can now enter your postprandial glucose!!";
       } else {
-        const minutesRemaining = Math.ceil(timeRemaining / 60000);
-        document.getElementById("timeRemaining").textContent = `Please wait ${minutesRemaining} minutes to enter your postprandial glucose!!`;
-        setTimeout(checkTimeAndEnable, 60000); // Check again in one minute
+      const minutesRemaining = Math.ceil(timeRemaining / 60000);
+      document.getElementById("timeRemaining").textContent = `Please wait ${minutesRemaining} minutes to enter your postprandial glucose!!`;
+      setTimeout(checkTimeAndEnable, 60000); // Check again in one minute
       }
     }
   </script>
