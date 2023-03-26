@@ -55,12 +55,6 @@ Several other factors, such as meal timing, sleep and wake-up times, and pre-mea
 
 ## How the Get Similar Meals Algorithm Works
 
-The user's most recently added meal is retrieved from the database. To do this, the `MealRecord` table is filtered based on the user's ID, and the latest record is selected.
-
-To choose similar meals, the `MealRecord`, `MealNutrition`, and `UserLog` tables are merged. This merging process is performed to select meals similar to the user's most recent meal. In this step, the three tables are combined, and the relevant columns are selected.
-
-This code is part of a program that helps find meals similar to a given meal, specifically for users with diabetes. The goal is to find up to three meals that have a similar effect on blood sugar levels after eating, taking into account various factors such as the main carbohydrate source and the total amount of carbohydrates in the meal.
-
 The algorithm starts by searching for meal records in a database, filtering the results based on certain criteria, such as the user's activity level and the time elapsed since the meal. It then goes through a series of four steps, with each step progressively relaxing the constraints on what is considered a "similar meal."
 
 1. In the first step, the algorithm looks for meals with the same main carbohydrate source and the same mix of carbohydrate sources. The total amount of carbohydrates and the main carbohydrate source should be within 10% of the new meal's values. The difference between fasting and postprandial (after-meal) glucose levels should not exceed 15% of fasting glucose levels. If at least one such meal is found, the search stops and the top 3 results are returned.
