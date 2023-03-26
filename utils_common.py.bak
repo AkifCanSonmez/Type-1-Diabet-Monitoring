@@ -6,7 +6,7 @@ import sys
 sys.path.append("..")
 
 model = torch.hub.load('ultralytics/yolov5', 'custom',
-                       path='best.pt', force_reload=True)
+                       path='last.pt', force_reload=True)
 
 
 # food_options is a list of foods whose information is in the nutrition database
