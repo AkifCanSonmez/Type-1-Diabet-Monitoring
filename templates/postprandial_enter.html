@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <title>Entering Postprandial Glucose</title>
+  <link rel="stylesheet" href="{{ url_for('static', path='css/postprandial_enter.css') }}">
+  <script>
+    function confirmDeleteAndRedirect() {
+      if (confirm("It'll be deleted from the database. Are you sure?")) {
+        document.getElementById('deleteForm').submit();
+      }
+    }
+
+    function checkTimeAndEnable() {
+      const mealTime = new Date("{{ data.user_log.meal_time }}").toISOString();
+      const currentTime = new Date();
+      const minimumInterval = 2 * 60 * 60 * 1000;
+      const timeRemaining = minimumInterval - (currentTime - new Date(mealTime));
+
+      if (timeRemaining <= 0) {
+        document.getElementById("postprandialGlucoseInput").disabled = false;
+        document.getElementById("submitButton").disabled = false;
+        document.getElementById("ready").textContent = "You can now enter your postprandial glucose!!";
+      } else {
+        const minutesRemaining = Math.ceil(timeRemaining / 60000);
+        document.getElementById("timeRemaining").textContent = `Please wait ${minutesRemaining} minutes to enter your postprandial glucose!!`;
+        setTimeout(checkTimeAndEnable, 60000); // Check again in one minute
+      }
+    }
+  </script>
+</head>
+
+<body onload="checkTimeAndEnable()">
+  <div class="container">
+    <h1>Enter Postprandial Glucose</h1>
+    <div class="meal-row">
+      <p>Last Meal Information</p>
+      <ul>
+        <li>
+          <label>Meal Time:</label> <span>{{ data.user_log.meal_time.strftime('%H:%M %d.%m.%Y') }}</span><br>
+          <label>Fasting Glucose:</label> <span>{{ data.user_log.fasting_glucose }} mg/dL</span><br>
+          <label>Main Carbohydrate Source:</label> <span>{{ data.nutritions.carbohydrate_source_main }}</span><br>
+          <label>Carbohydrate Amount Total:</label> <span>{{ data.nutritions.carbohydrate_amount_total }}gr</span><br>
+        </li>
+      </ul>
+    </div>
+    <div>
+      <div id="timeRemaining" class="time-1-div"></div>
+      <div id="ready" class="time-2-div"></div>
+      <form action="/add-postprandial-glucose-last-meal" method="post">
+        <input type="number" id="postprandialGlucoseInput" name="postprandial_glucose" required disabled>
+        <button type="submit" id="submitButton" class="enter" disabled>Submit</button>
+      </form>
+    </div>
+    <div class="side-buttons">
+      <button onclick="confirmDeleteAndRedirect()" class="delete">Delete</button>
+      <form action="/home" method="get">
+        <button type="submit" class="remind-me-later">Remind me later</button>
+      </form>
+      <form id="deleteForm" action="/delete-missing-and-redirect" method="post" style="display: none;">
+      </form>
+    </div>
+  </div>
+</body>
+
+</html>

@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static', path='/css/detected_foods.css') }}">
+  <title>Two Body HTML Page</title>
+</head>
+
+<body>
+  <div id="container">
+    <form id="food-form" action="/newmeal/nutritions" method="post">
+      <div id="food-info">
+        <h1>Food Infos</h1>
+        {% for obj in objects %}
+        <div>
+          <label for="food">Food:</label>
+          <select id="food" name="foods">
+            {% for option in food_options %}
+            {% if option == obj %}
+            <option value="{{ option }}" selected>{{ option }}</option>
+            {% else %}
+            <option value="{{ option }}">{{ option }}</option>
+            {% endif %}
+            {% endfor %}
+          </select>
+          <label for="amount">Amount:</label>
+          <input type="number" id="amount" name="amounts" value="" placeholder="type in gram" required>
+          <button class="remove-food-btn" onclick="removeFoodInfo(this)">x</button>
+        </div>
+        {% endfor %}
+        <button id="add-food-btn" onclick="addFoodInfo()">+</button>
+      </div>
+      <div>
+        <button id="continue-button" type="submit" name="action" value="continue">Continue</button>
+        <button id="save-and-exit-button" type="submit" name="action" value="save_and_exit">Save and Exit</button>
+      </div>
+    </form>
+  </div>
+  <script>
+    function addFoodInfo() {
+      const foodInfoDiv = document.querySelector('#food-info');
+      const newFoodDiv = document.createElement('div');
+      newFoodDiv.innerHTML = `
+        <label for="food">Food:</label>
+        <select id="food" name="foods">
+          {% for option in food_options %}
+          <option value="{{ option }}">{{ option }}</option>
+          {% endfor %}
+        </select>
+        <label for="amount">Amount:</label>
+        <input type="number" id="amount" name="amounts" value="" placeholder="type in gram" required>
+        <button class="remove-food-btn" onclick="removeFoodInfo(this)">x</button>
+      `;
+      foodInfoDiv.insertBefore(newFoodDiv, document.querySelector('#add-food-btn'));
+    }
+
+    function removeFoodInfo(btn) {
+      btn.parentNode.parentNode.removeChild(btn.parentNode);
+    }
+  </script>
+</body>
+
+</html>
