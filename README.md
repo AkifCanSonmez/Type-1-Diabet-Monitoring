@@ -59,24 +59,16 @@ The user's most recently added meal is retrieved from the database. To do this, 
 
 To choose similar meals, the `MealRecord`, `MealNutrition`, and `UserLog` tables are merged. This merging process is performed to select meals similar to the user's most recent meal. In this step, the three tables are combined, and the relevant columns are selected.
 
-The following features are considered when selecting similar meals:
-- Sources of carbohydrates
-- Total carbohydrate amount
-- Main carbohydrate amount
-- Fasting and postprandial glucose values
-- Type and duration of activity
-- Differences between carbohydrate sources and amounts in similar meals and the last meal
+This code is part of a program that helps find meals similar to a given meal, specifically for users with diabetes. The goal is to find up to three meals that have a similar effect on blood sugar levels after eating, taking into account various factors such as the main carbohydrate source and the total amount of carbohydrates in the meal.
 
-The selection of similar meals is carried out sequentially based on different scenarios. Each scenario selects similar meals based on specific features. The scenarios include:
+The algorithm starts by searching for meal records in a database, filtering the results based on certain criteria, such as the user's activity level and the time elapsed since the meal. It then goes through a series of four steps, with each step progressively relaxing the constraints on what is considered a "similar meal."
 
-1. Meals with completely matching carbohydrate sources and amounts are chosen. In this scenario, a difference of less than 10% in the main carbohydrate amount is expected.
-2. Meals with matching main carbohydrate sources are chosen. In this scenario, a difference of less than 10% in the main carbohydrate amount is expected.
-3. Meals with only matching carbohydrate amounts are chosen. In this scenario, a difference of less than 10% in the total carbohydrate amount is expected.
-4. Meals with different main carbohydrate sources are chosen. In this scenario, a difference of less than 15% in glycemic indices of the main carbohydrate sources is expected. Additionally, a difference of less than 10% in the total carbohydrate amount is expected.
+1: In the first step, the algorithm looks for meals with the same main carbohydrate source and the same mix of carbohydrate sources. The total amount of carbohydrates and the main carbohydrate source should be within 10% of the new meal's values. The difference between fasting and postprandial (after-meal) glucose levels should not exceed 15% of fasting glucose levels. If at least one such meal is found, the search stops and the top 3 results are returned.
+2: If no results are found in the first step, the second step relaxes the constraint on the mix of carbohydrate sources, only requiring the main carbohydrate source to be the same. The other criteria remain the same as in the first step.
+3: If no results are found in the second step, the third step further relaxes the constraints, only requiring the main carbohydrate source to be the same and the total amount of carbohydrates to be within 10% of the new meal's values. The difference between fasting and postprandial glucose levels should still not exceed 15% of fasting glucose levels.
+4:If no results are found in the third step, the fourth and final step relaxes the constraints even further. In this step, the main carbohydrate source does not have to be the same. Instead, the algorithm searches for meals with a glycemic index (GI) score within 15% of the new meal's GI score. The total amount of carbohydrates must still be within 10% of the new meal's values, and the difference between fasting and postprandial glucose levels should not exceed 15% of fasting glucose levels.
 
-The selected similar meals are stored in a dictionary, considering features like carbohydrate sources, total carbohydrate amount, fasting glucose value, novorapid dose, and postprandial glucose value.
-
-Finally, the dictionary is returned to display similar meals to the user. These steps ensure that the user's most recently added meal is compared with other meals in the database, and similar meals are selected, allowing the user to decide how much insulin to inject based on similar meals.
+If at least one meal is found in any of the steps, the search stops, and the top 3 most similar meals are returned, sorted by how close their fasting glucose levels are to the new meal's fasting glucose level. If no similar meals are found after going through all four steps, the function returns "False," indicating that no similar meals were found.
 
 In conclusion, this code serves as a tool to help users determine their insulin dosage. By selecting similar meals, users are provided with suggestions, enabling them to make more accurate decisions for diabetes management.
 
