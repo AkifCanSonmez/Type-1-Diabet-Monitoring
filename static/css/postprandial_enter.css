@@ -120,6 +120,7 @@ form input[type="number"]:focus {
   font-weight: bold;
   color: red;
   text-align: center;
+  margin-top: 20px;
 }
 
 .time-2-div {
@@ -128,6 +129,7 @@ form input[type="number"]:focus {
   font-weight: bold;
   color: rgb(0, 184, 0);
   text-align: center;
+  margin-top: 20px;
 }
 
 @media screen and (min-width: 600px) {
