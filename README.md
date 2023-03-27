@@ -9,6 +9,8 @@
 3. [What Does Get Similar Meals Algorithm Do?](#what-does-get-similar-meals-algorithm-do)
 4. [How the Get Similar Meals Algorithm Works](#how-the-get-similar-meals-algorithm-works)
 5. [Technologies Used](#technologies-used)
+6. [EC2 Instance IP](#ec2-instance-ip)
+
 
 
 ## Why I Created This Program
@@ -76,3 +78,11 @@ In conclusion, this code serves as a tool to help users determine their insulin 
 - **Docker**: To simplify deployment and management, I leveraged Docker for containerizing the application and its dependencies, ensuring easy deployment and scaling.
 - **Amazon AWS EC2**: I deployed the application on Amazon AWS EC2, a cloud-based computing platform, to guarantee scalability and reliability.
 - **SQLAlchemy**: To handle interactions between the application and the PostgreSQL database, I employed SQLAlchemy, a popular SQL toolkit and Object-Relational Mapping (ORM) library for Python.
+
+## EC2 Instance IP
+
+The Type 1 Diabetes Monitoring program has been deployed on an Amazon AWS EC2 instance to ensure scalability and reliability. If you would like to access the program, you can use the following IP address to access the API:
+
+- [EC2 Instance IP: 34.207.194.103](http://34.207.194.103)
+
+Please note that you will need to have the necessary credentials to access the instance. If you have any questions or issues accessing the program, feel free to contact me.
