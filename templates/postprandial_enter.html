@@ -1,34 +1,35 @@
 <!DOCTYPE html>
 <html>
-
 <head>
   <meta charset="UTF-8">
   <title>Entering Postprandial Glucose</title>
   <link rel="stylesheet" href="{{ url_for('static', path='css/postprandial_enter.css') }}">
-	<script>
-	  function confirmDeleteAndRedirect() {
-		if (confirm("It'll be deleted from the database. Are you sure?")) {
-		  document.getElementById('deleteForm').submit();
-		}
-	  }
+  <script>
+    function confirmDeleteAndRedirect() {
+      if (confirm("It'll be deleted from the database. Are you sure?")) {
+        document.getElementById('deleteForm').submit();
+      }
+    }
 
-	  function checkTimeAndEnable() {
-		const mealTime = new Date("{{ data.user_log.meal_time }}").toISOString();
-		const currentTime = new Date();
-		const minimumInterval = 2 * 60 * 60 * 1000;
-		const timeRemaining = minimumInterval - (currentTime.getTime() - new Date(mealTime).getTime());
+    function checkTimeAndEnable() {
+      const mealTime = new Date("{{ data.user_log.meal_time }}");
+      const turkeyTimezone = "Europe/Istanbul";
+      const turkeyTime = mealTime.toLocaleString('en-US', { timeZone: turkeyTimezone });
+      const currentTime = new Date();
+      const minimumInterval = 2 * 60 * 60 * 1000;
+      const timeRemaining = minimumInterval - (currentTime.getTime() - mealTime.getTime());
 
-		if (timeRemaining <= 0) {
-		  document.getElementById("postprandialGlucoseInput").disabled = false;
-		  document.getElementById("submitButton").disabled = false;
-		  document.getElementById("ready").textContent = "You can now enter your postprandial glucose!!";
-		} else {
-		  const minutesRemaining = Math.ceil(timeRemaining / 60000);
-		  document.getElementById("timeRemaining").textContent = `Please wait ${minutesRemaining} minutes to enter your postprandial glucose!!`;
-		  setTimeout(checkTimeAndEnable, 60000); // Check again in one minute
-		}
-	  }
-	</script>
+      if (timeRemaining <= 0) {
+        document.getElementById("postprandialGlucoseInput").disabled = false;
+        document.getElementById("submitButton").disabled = false;
+        document.getElementById("ready").textContent = "You can now enter your postprandial glucose!!";
+      } else {
+        const minutesRemaining = Math.ceil(timeRemaining / 60000);
+        document.getElementById("timeRemaining").textContent = `Please wait ${minutesRemaining} minutes to enter your postprandial glucose!! (${turkeyTime})`;
+        setTimeout(checkTimeAndEnable, 60000); // Check again in one minute
+      }
+    }
+  </script>
 </head>
 
 <body onload="checkTimeAndEnable()">
