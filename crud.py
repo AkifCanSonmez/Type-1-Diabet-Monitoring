@@ -8,6 +8,7 @@ import decimal
 import tables
 from sqlalchemy import or_, and_, func, extract
 from sqlalchemy.orm import Session, joinedload, contains_eager
+import pytz
 import sys
 
 sys.path.append("..")
@@ -481,8 +482,8 @@ def process_user_log_inputs(db: Session, user_log):
         col.minutes_after_activity = (
             1  # This is Default value for avoiding mathematical operations errors
         )
-
-    col.meal_time = datetime.datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S')
+    turkey_tz = pytz.timezone('Europe/Istanbul')
+    col.meal_time = datetime.datetime.now(turkey_tz)
     print(col.meal_time)
 
     # Kullanıcında Bed Time input'u aynı gün içerisinde bed time girilmemişse geliyor
