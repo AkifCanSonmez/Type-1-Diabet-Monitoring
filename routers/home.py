@@ -81,6 +81,7 @@ async def missing_postprandial_glucose(request: Request, db: Session = Depends(g
 
     missing_postprandial_glucose = crud.get_missing_postprandial_glucose(
         db, user["id"])
+    print(missing_postprandial_glucose.user_log.meal_time)
     return templates.TemplateResponse("postprandial_enter.html", {"request": request,
                                                                   "data": missing_postprandial_glucose})
 
