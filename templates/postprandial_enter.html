@@ -12,13 +12,15 @@
     }
 
     function checkTimeAndEnable() {
+      /*
       const mealTime = new Date("{{ data.user_log.meal_time }}");
       const turkeyTimezone = "Europe/Istanbul";
       const turkeyTime = mealTime.toLocaleString('en-US', { timeZone: turkeyTimezone });
       const currentTime = new Date();
       const minimumInterval = 2 * 60 * 60 * 1000;
       const timeRemaining = minimumInterval - (currentTime.getTime() - mealTime.getTime());
-
+      */
+      timeRemaining = 0;
       if (timeRemaining <= 0) {
         document.getElementById("postprandialGlucoseInput").disabled = false;
         document.getElementById("submitButton").disabled = false;
