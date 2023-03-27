@@ -39,7 +39,7 @@
       <p>Last Meal Information</p>
       <ul>
         <li>
-          <label>Meal Time:</label> <span>{{ data.user_log.meal_time.strftime('%H:%M %d.%m.%Y') }}</span><br>
+          <label>Meal Time:</label> <span>{{ data.user_log.meal_time.strftime('%H:%M:%S %d.%m.%Y') }}</span><br>
           <label>Fasting Glucose:</label> <span>{{ data.user_log.fasting_glucose }} mg/dL</span><br>
           <label>Main Carbohydrate Source:</label> <span>{{ data.nutritions.carbohydrate_source_main }}</span><br>
           <label>Carbohydrate Amount Total:</label> <span>{{ data.nutritions.carbohydrate_amount_total }}gr</span><br>
