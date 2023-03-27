@@ -19,7 +19,7 @@ router = APIRouter(
 )
 
 # to create access token
-SECRET_KEY = "KlgH6AzYDeZeGwD288to79I3vTHT8wp7"  # change this to a secure value
+SECRET_KEY = "KlgH6AzYDeZeGwD288to79I3vTHT8wp7"
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
