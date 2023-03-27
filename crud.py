@@ -471,9 +471,7 @@ def process_user_log_inputs(db: Session, user_log):
         act_end = datetime.datetime.strptime(
             user_log["activity-end-time"], "%H:%M"
         ).time()
-        now = (
-            datetime.datetime.now().replace(second=0, microsecond=0).time()
-        )
+        now = datetime.datetime.utcnow().replace(second=0, microsecond=0).time()
         col.minutes_after_activity = (
             ((now.hour - act_end.hour) * 60) + now.minute - act_end.minute
         )
@@ -482,24 +480,23 @@ def process_user_log_inputs(db: Session, user_log):
             1  # This is Default value for avoiding mathmematical operations errors
         )
 
-    col.meal_time = datetime.datetime.now()
+    col.meal_time = datetime.datetime.utcnow()
     print(col.meal_time)
 
-    # Kullanıcında Bed Time input'u aynı gün içerisinde bed time girilmemişse geliyor
+    # If Bed Time input is not given on the same day, use the previous day's Bed Time and Wake Up Time values
     if "Bed Time" in user_log.keys():
         bed_time = datetime.datetime.strptime(
             user_log["Bed Time"], "%H:%M").time()
         wake_up_time = datetime.datetime.strptime(
             user_log["Wake Up Time"], "%H:%M"
         ).time()
-        now = datetime.datetime.now()
 
         # Getting TIMESTAMP value
-        col.bed_time = result = datetime.datetime.combine(now.date(), bed_time)
-        col.wake_up_time = datetime.datetime.combine(now.date(), wake_up_time)
+        col.bed_time = result = datetime.datetime.combine(datetime.date.today(), bed_time)
+        col.wake_up_time = datetime.datetime.combine(datetime.date.today(), wake_up_time)
 
     else:
-        # If there is bed&wake up time for same day in db, use this for new row
+        # If there is bed&wake up time for the previous day in the database, use this for the new row
         last_row = (
             db.query(tables.UserLog).order_by(
                 tables.UserLog.pk_user_log.desc()).first()
