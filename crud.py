@@ -483,7 +483,8 @@ def process_user_log_inputs(db: Session, user_log):
             1  # This is Default value for avoiding mathematical operations errors
         )
         
-    col.meal_time = datetime.datetime.utcnow().replace(microsecond=0)
+    turkey_tz = pytz.timezone('Europe/Istanbul')
+    col.meal_time = datetime.datetime.now(turkey_tz).replace(microsecond=0)
     print(col.meal_time)
 
     # Kullanıcında Bed Time input'u aynı gün içerisinde bed time girilmemişse geliyor
