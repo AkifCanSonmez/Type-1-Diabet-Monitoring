@@ -10,6 +10,8 @@
 4. [How the Get Similar Meals Algorithm Works](#how-the-get-similar-meals-algorithm-works)
 5. [Technologies Used](#technologies-used)
 6. [EC2 Instance IP](#ec2-instance-ip)
+7. [Video Description](#video-description)
+
 
 
 
@@ -86,3 +88,7 @@ The Type 1 Diabetes Monitoring program has been deployed on an Amazon AWS EC2 in
 - [EC2 Instance IP: 34.207.194.103](http://34.207.194.103)
 
 Please note that you will need to have the necessary credentials to access the instance. If you have any questions or issues accessing the program, feel free to contact me.
+
+## Video Description
+
+A video overview of the Type 1 Diabetes Monitoring program can be found [here](https://www.youtube.com/watch?v=35GE16QqubY).
