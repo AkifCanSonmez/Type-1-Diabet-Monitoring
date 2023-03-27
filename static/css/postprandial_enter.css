@@ -64,8 +64,8 @@ form input[type="number"]:focus {
 
 /* Containers */
 .container {
-  max-width: 800px;
-  margin: 0 auto;
+  max-width: 100%;
+  margin: 0;
   padding: 20px;
   background-color: #fff;
   border-radius: 5px;
@@ -93,8 +93,7 @@ form input[type="number"]:focus {
   display: flex;
   justify-content: flex-start;
   align-items: center;
-  margin-top: -39px;
-  margin-left: 100px;
+  margin-top: 20px;
 }
 
 .remind-me-later,
@@ -117,14 +116,37 @@ form input[type="number"]:focus {
 
 .time-1-div {
   font-family: Arial, sans-serif;
-  font-size: 20px;
+  font-size: 16px;
   font-weight: bold;
   color: red;
+  text-align: center;
 }
 
 .time-2-div {
   font-family: Arial, sans-serif;
-  font-size: 20px;
+  font-size: 16px;
   font-weight: bold;
   color: rgb(0, 184, 0);
+  text-align: center;
+}
+
+@media screen and (min-width: 600px) {
+  /* Apply styles for larger screens */
+  .container {
+    max-width: 800px;
+    margin: 0 auto;
+  }
+
+  .side-buttons {
+    margin-top: -39px;
+    margin-left: 100px;
+  }
+
+  .time-1-div {
+    font-size: 20px;
+  }
+
+  .time-2-div {
+    font-size: 20px;
+  }
 }
