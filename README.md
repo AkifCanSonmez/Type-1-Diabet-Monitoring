@@ -1,5 +1,8 @@
 # Type 1 Diabetes Monitoring
 
+## Youtube Video Link: Explaining My Code
+A video overview of the Type 1 Diabetes Monitoring program can be found [here](https://www.youtube.com/watch?v=35GE16QqubY).
+
 ## Table of Contents
 1. [Why I Created This Program](#why-i-created-this-program)
 2. [How the Program Works](#how-the-program-works)
@@ -10,10 +13,6 @@
 4. [How the Get Similar Meals Algorithm Works](#how-the-get-similar-meals-algorithm-works)
 5. [Technologies Used](#technologies-used)
 6. [Try App with EC2 IP](#try-app-with-ec2-ip)
-7. [Video Description](#video-description)
-
-
-
 
 ## Why I Created This Program
 
@@ -88,7 +87,3 @@ The Type 1 Diabetes Monitoring program has been deployed on an Amazon AWS EC2 in
 - [EC2 Instance IP: 34.207.194.103](http://34.207.194.103)
 
 Please note that you will need to have the necessary credentials to access the instance. If you have any questions or issues accessing the program, feel free to contact me.
-
-## Video Description
-
-A video overview of the Type 1 Diabetes Monitoring program can be found [here](https://www.youtube.com/watch?v=35GE16QqubY).
