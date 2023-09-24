@@ -1,7 +1,6 @@
 # Type 1 Diabetes Monitoring
 
-## Youtube Video Link: Explaining My Code
-A video overview of the Type 1 Diabetes Monitoring program can be found [here](https://www.youtube.com/watch?v=35GE16QqubY).
+A video overview of the Type 1 Diabetes Monitoring program can be found [here](https://www.youtube.com/watch?v=35GE16QqubY)(Youtube Link).
 
 ## Table of Contents
 1. [Why I Created This Program](#why-i-created-this-program)
