@@ -82,8 +82,7 @@ In conclusion, this code serves as a tool to help users determine their insulin 
 ## Try App with EC2 IP
 
 The Type 1 Diabetes Monitoring program has been deployed on an Amazon AWS EC2 instance to ensure scalability and reliability. If you would like to access the program, you can use the following IP address to access the API:
+!!! Temporarily disabled !!!
 
-### Temporarily disabled
-- [EC2 Instance IP: 34.207.194.103](http://34.207.194.103)
 
 Please note that you will need to have the necessary credentials to access the instance. If you have any questions or issues accessing the program, feel free to contact me.
